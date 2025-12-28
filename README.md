@@ -10,6 +10,7 @@
 - ✅ Identidade visual: Azul (#2563eb) como cor primária
 - ✅ Hero section com busca inteligente de imóveis
 - ✅ Filtros rápidos (preço, quartos, garagem, pet friendly)
+- ✅ **Seção de Imóveis em Destaque** - Carregamento automático na homepage
 - ✅ Seção de estatísticas (10K+ imóveis, 50K+ usuários)
 - ✅ Cards de features com animações hover
 - ✅ CTA para anúncio de imóveis
@@ -39,8 +40,11 @@
   - Filtro por características (quartos, vagas)
   - Filtro pet friendly
   - Paginação automática
+  - **Ordenação por destaque** (imóveis destacados aparecem primeiro)
 - ✅ `GET /api/imoveis/:id` - Detalhes de um imóvel específico
-- ✅ `GET /api/imoveis/destaque/list` - Imóveis em destaque
+- ✅ `GET /api/imoveis/destaque/list` - Listagem exclusiva de imóveis em destaque
+- ✅ `POST /api/imoveis` - Cadastro de novos imóveis (proprietários/corretores)
+  - **Inclui campo `destaque`** para destacar imóvel na página principal
 
 ### 🖼️ Página de Listagem de Imóveis ✅
 - ✅ Interface moderna e responsiva
@@ -52,6 +56,26 @@
 - ✅ Skeleton loading durante carregamento
 - ✅ Badges de destaque e finalidade
 - ✅ Integração completa frontend-backend
+
+### ⭐ Sistema de Destaque de Imóveis ✅ (NOVO!)
+- ✅ **Campo `destaque`** na tabela de imóveis (boolean)
+- ✅ **Seção dedicada na homepage** para imóveis em destaque
+  - Carregamento automático via API
+  - Design diferenciado com badge dourado "⭐ Destaque"
+  - Até 6 imóveis em destaque simultâneos
+- ✅ **Checkbox no formulário de cadastro** de imóveis
+  - Proprietários podem marcar seus imóveis como destaque
+  - Visual chamativo com explicação dos benefícios
+- ✅ **API dedicada** (`GET /api/imoveis/destaque/list`)
+- ✅ **Priorização nas listagens** - Imóveis em destaque aparecem primeiro
+- ✅ **Funcionalidade testada e validada** com cenários reais
+
+**Como funciona:**
+1. Proprietário acessa `/cadastrar-imovel` após login
+2. Preenche formulário completo do imóvel
+3. Marca checkbox "⭐ Destacar meu Imóvel na Página Principal"
+4. Imóvel aparece automaticamente na seção de destaques da home
+5. Recebe maior visibilidade e prioridade nas buscas
 
 ### 🔧 Stack Tecnológica
 - **Backend**: Hono Framework (Edge Runtime)
