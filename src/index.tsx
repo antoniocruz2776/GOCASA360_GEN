@@ -1,7 +1,12 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import imoveis from './routes/imoveis'
 
-const app = new Hono()
+type Bindings = {
+  DB: D1Database;
+}
+
+const app = new Hono<{ Bindings: Bindings }>()
 
 // Enable CORS for API routes
 app.use('/api/*', cors())
@@ -14,6 +19,9 @@ app.get('/api/health', (c) => {
     timestamp: new Date().toISOString()
   })
 })
+
+// API Routes
+app.route('/api/imoveis', imoveis)
 
 // Main Landing Page
 app.get('/', (c) => {
