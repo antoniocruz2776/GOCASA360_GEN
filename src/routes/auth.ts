@@ -273,4 +273,121 @@ auth.post('/logout', async (c) => {
   }
 })
 
+// POST /api/auth/admin/login - Login específico para admin
+auth.post('/admin/login', async (c) => {
+  try {
+    const { DB } = c.env
+    const { email, senha } = await c.req.json()
+    
+    // Validações
+    if (!email || !senha) {
+      return c.json({
+        success: false,
+        message: 'Email e senha são obrigatórios'
+      }, 400)
+    }
+    
+    // Buscar usuário admin
+    const usuario = await DB.prepare(`
+      SELECT * FROM usuarios 
+      WHERE email = ? AND tipo = 'admin' AND ativo = 1
+    `).bind(email).first()
+    
+    if (!usuario) {
+      return c.json({
+        success: false,
+        message: 'Email ou senha inválidos ou usuário não é administrador'
+      }, 401)
+    }
+    
+    // Verificar senha
+    const senhaHash = await hashPassword(senha)
+    if (senhaHash !== usuario.senha_hash) {
+      // Incrementar tentativas de login
+      await DB.prepare(`
+        UPDATE usuarios 
+        SET tentativas_login = tentativas_login + 1
+        WHERE id = ?
+      `).bind(usuario.id).run()
+      
+      return c.json({
+        success: false,
+        message: 'Email ou senha inválidos'
+      }, 401)
+    }
+    
+    // Verificar se está bloqueado
+    if (usuario.bloqueado_ate) {
+      const now = new Date()
+      const bloqueadoAte = new Date(usuario.bloqueado_ate as string)
+      
+      if (now < bloqueadoAte) {
+        return c.json({
+          success: false,
+          message: 'Conta bloqueada temporariamente. Tente novamente mais tarde.'
+        }, 403)
+      }
+    }
+    
+    // Gerar JWT token
+    const payload = {
+      userId: usuario.id,
+      email: usuario.email,
+      tipo: usuario.tipo,
+      nome: usuario.nome_completo
+    }
+    
+    const secret = 'your-secret-key-change-in-production' // Deve vir de variável de ambiente
+    const token = await sign(payload, secret)
+    
+    // Criar sessão
+    const sessionId = generateId('session')
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 7) // 7 dias
+    
+    await DB.prepare(`
+      INSERT INTO sessoes (id, usuario_id, token, expires_at)
+      VALUES (?, ?, ?, ?)
+    `).bind(sessionId, usuario.id, token, expiresAt.toISOString()).run()
+    
+    // Atualizar último login e resetar tentativas
+    await DB.prepare(`
+      UPDATE usuarios 
+      SET ultimo_login = datetime('now'), tentativas_login = 0
+      WHERE id = ?
+    `).bind(usuario.id).run()
+    
+    // Buscar permissões do admin
+    const permissoes = await DB.prepare(`
+      SELECT ap.nome, ap.permissoes
+      FROM usuarios_permissoes up
+      JOIN admin_permissoes ap ON up.permissao_id = ap.id
+      WHERE up.usuario_id = ?
+    `).bind(usuario.id).all()
+    
+    return c.json({
+      success: true,
+      message: 'Login realizado com sucesso',
+      data: {
+        token,
+        usuario: {
+          id: usuario.id,
+          nome: usuario.nome_completo,
+          email: usuario.email,
+          tipo: usuario.tipo,
+          foto_perfil: usuario.foto_perfil
+        },
+        permissoes: permissoes.results
+      }
+    })
+    
+  } catch (error) {
+    console.error('Erro ao fazer login admin:', error)
+    return c.json({
+      success: false,
+      message: 'Erro ao fazer login'
+    }, 500)
+  }
+})
+
 export default auth

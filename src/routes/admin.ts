@@ -1,5 +1,13 @@
 import { Hono } from 'hono'
 import type { Context } from 'hono'
+import { 
+  requireAdmin, 
+  requirePermission, 
+  logAdminAction,
+  getUserPermissions,
+  createAdminNotification,
+  isBlacklisted
+} from '../utils/auth'
 
 type Bindings = {
   DB: D1Database
@@ -7,23 +15,8 @@ type Bindings = {
 
 const admin = new Hono<{ Bindings: Bindings }>()
 
-// ============================================
-// MIDDLEWARE: Verificar se é Admin
-// ============================================
-async function verificarAdmin(c: Context, next: Function) {
-  // TODO: Implementar verificação de JWT/sessão real
-  // Por enquanto, vamos assumir que o admin está autenticado
-  // Em produção, verificar token JWT e role do usuário
-  
-  const authHeader = c.req.header('Authorization')
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return c.json({ success: false, message: 'Não autorizado' }, 401)
-  }
-
-  // Simular verificação de admin
-  // Em produção: decodificar JWT e verificar tipo === 'admin'
-  await next()
-}
+// Apply admin authentication middleware to all routes
+admin.use('/*', requireAdmin)
 
 // ============================================
 // DASHBOARD - Estatísticas Gerais
