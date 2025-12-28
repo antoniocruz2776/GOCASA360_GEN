@@ -969,14 +969,16 @@ pages.get('/', (c) => {
         <script>
             // Initialize everything when page loads
             document.addEventListener('DOMContentLoaded', () => {
-                // Initialize I18N
+                // Initialize I18N first
                 if (window.I18N) {
                     window.I18N.init();
                     updateLanguageButton();
                 }
                 
-                // Load featured properties
-                carregarDestaquesHome();
+                // Load featured properties after a small delay to ensure everything is ready
+                setTimeout(() => {
+                    carregarDestaquesHome();
+                }, 100);
                 
                 // Language selector dropdown toggle
                 const languageBtn = document.getElementById('currentLanguageBtn');
