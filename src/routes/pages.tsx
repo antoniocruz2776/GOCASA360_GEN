@@ -6,7 +6,7 @@ const pages = new Hono()
 pages.get('/imoveis', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <html lang="pt-BR">
+    <html lang="pt-BR" id="htmlTag">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,6 +55,7 @@ pages.get('/imoveis', (c) => {
             50% { background-position: 0 0; }
           }
         </style>
+        <script src="/i18n.js"></script>
     </head>
     <body class="bg-gray-50">
         <!-- Navigation -->
@@ -413,6 +414,54 @@ pages.get('/imoveis', (c) => {
             return new Intl.NumberFormat('pt-BR').format(num);
           }
         </script>
+
+        <script>
+            // Initialize i18n
+            let i18nInstance;
+            
+            async function initI18n() {
+                i18nInstance = await i18n.init();
+                updateLanguageButton();
+            }
+            
+            async function changeLanguage(locale) {
+                await i18nInstance.changeLocale(locale);
+                window.location.reload();
+            }
+            
+            function updateLanguageButton() {
+                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
+                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
+                
+                const currentLang = i18nInstance.currentLocale;
+                const flagEl = document.getElementById('currentFlag');
+                const langEl = document.getElementById('currentLang');
+                const htmlTag = document.getElementById('htmlTag');
+                
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
+                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
+                if (htmlTag) htmlTag.lang = currentLang;
+            }
+            
+            // Toggle dropdown
+            document.addEventListener('click', (e) => {
+                const btn = document.getElementById('langBtn');
+                const dropdown = document.getElementById('langDropdown');
+                
+                if (btn && btn.contains(e.target)) {
+                    dropdown.classList.toggle('hidden');
+                } else if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            
+            // Initialize on load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initI18n);
+            } else {
+                initI18n();
+            }
+        </script>
     </body>
     </html>
   `)
@@ -422,7 +471,7 @@ pages.get('/imoveis', (c) => {
 pages.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <html lang="pt-BR">
+    <html lang="pt-BR" id="htmlTag">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -479,6 +528,7 @@ pages.get('/', (c) => {
             background-clip: text;
           }
         </style>
+        <script src="/i18n.js"></script>
     </head>
     <body class="bg-gray-50">
         <!-- Navigation -->
@@ -863,6 +913,54 @@ pages.get('/', (c) => {
             carregarDestaquesHome();
           });
         </script>
+
+        <script>
+            // Initialize i18n
+            let i18nInstance;
+            
+            async function initI18n() {
+                i18nInstance = await i18n.init();
+                updateLanguageButton();
+            }
+            
+            async function changeLanguage(locale) {
+                await i18nInstance.changeLocale(locale);
+                window.location.reload();
+            }
+            
+            function updateLanguageButton() {
+                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
+                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
+                
+                const currentLang = i18nInstance.currentLocale;
+                const flagEl = document.getElementById('currentFlag');
+                const langEl = document.getElementById('currentLang');
+                const htmlTag = document.getElementById('htmlTag');
+                
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
+                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
+                if (htmlTag) htmlTag.lang = currentLang;
+            }
+            
+            // Toggle dropdown
+            document.addEventListener('click', (e) => {
+                const btn = document.getElementById('langBtn');
+                const dropdown = document.getElementById('langDropdown');
+                
+                if (btn && btn.contains(e.target)) {
+                    dropdown.classList.toggle('hidden');
+                } else if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            
+            // Initialize on load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initI18n);
+            } else {
+                initI18n();
+            }
+        </script>
     </body>
     </html>
   `)
@@ -872,7 +970,7 @@ pages.get('/', (c) => {
 pages.get('/login', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <html lang="pt-BR">
+    <html lang="pt-BR" id="htmlTag">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -896,6 +994,7 @@ pages.get('/login', (c) => {
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
           body { font-family: 'Inter', sans-serif; }
         </style>
+        <script src="/i18n.js"></script>
     </head>
     <body class="bg-gray-50">
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -1018,6 +1117,54 @@ pages.get('/login', (c) => {
             alertDiv.classList.remove('hidden');
           }
         </script>
+
+        <script>
+            // Initialize i18n
+            let i18nInstance;
+            
+            async function initI18n() {
+                i18nInstance = await i18n.init();
+                updateLanguageButton();
+            }
+            
+            async function changeLanguage(locale) {
+                await i18nInstance.changeLocale(locale);
+                window.location.reload();
+            }
+            
+            function updateLanguageButton() {
+                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
+                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
+                
+                const currentLang = i18nInstance.currentLocale;
+                const flagEl = document.getElementById('currentFlag');
+                const langEl = document.getElementById('currentLang');
+                const htmlTag = document.getElementById('htmlTag');
+                
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
+                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
+                if (htmlTag) htmlTag.lang = currentLang;
+            }
+            
+            // Toggle dropdown
+            document.addEventListener('click', (e) => {
+                const btn = document.getElementById('langBtn');
+                const dropdown = document.getElementById('langDropdown');
+                
+                if (btn && btn.contains(e.target)) {
+                    dropdown.classList.toggle('hidden');
+                } else if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            
+            // Initialize on load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initI18n);
+            } else {
+                initI18n();
+            }
+        </script>
     </body>
     </html>
   `)
@@ -1027,7 +1174,7 @@ pages.get('/login', (c) => {
 pages.get('/cadastro', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <html lang="pt-BR">
+    <html lang="pt-BR" id="htmlTag">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1051,6 +1198,7 @@ pages.get('/cadastro', (c) => {
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
           body { font-family: 'Inter', sans-serif; }
         </style>
+        <script src="/i18n.js"></script>
     </head>
     <body class="bg-gray-50">
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -1251,6 +1399,54 @@ pages.get('/cadastro', (c) => {
             alertDiv.classList.remove('hidden');
           }
         </script>
+
+        <script>
+            // Initialize i18n
+            let i18nInstance;
+            
+            async function initI18n() {
+                i18nInstance = await i18n.init();
+                updateLanguageButton();
+            }
+            
+            async function changeLanguage(locale) {
+                await i18nInstance.changeLocale(locale);
+                window.location.reload();
+            }
+            
+            function updateLanguageButton() {
+                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
+                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
+                
+                const currentLang = i18nInstance.currentLocale;
+                const flagEl = document.getElementById('currentFlag');
+                const langEl = document.getElementById('currentLang');
+                const htmlTag = document.getElementById('htmlTag');
+                
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
+                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
+                if (htmlTag) htmlTag.lang = currentLang;
+            }
+            
+            // Toggle dropdown
+            document.addEventListener('click', (e) => {
+                const btn = document.getElementById('langBtn');
+                const dropdown = document.getElementById('langDropdown');
+                
+                if (btn && btn.contains(e.target)) {
+                    dropdown.classList.toggle('hidden');
+                } else if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            
+            // Initialize on load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initI18n);
+            } else {
+                initI18n();
+            }
+        </script>
     </body>
     </html>
   `)
@@ -1262,7 +1458,7 @@ pages.get('/imoveis/:id', (c) => {
   
   return c.html(`
     <!DOCTYPE html>
-    <html lang="pt-BR">
+    <html lang="pt-BR" id="htmlTag">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1318,6 +1514,7 @@ pages.get('/imoveis/:id', (c) => {
             max-height: 90%;
           }
         </style>
+        <script src="/i18n.js"></script>
     </head>
     <body class="bg-gray-50">
         <!-- Navigation -->
@@ -1875,6 +2072,54 @@ pages.get('/imoveis/:id', (c) => {
             return comodidades[comodidade] || comodidade;
           }
         </script>
+
+        <script>
+            // Initialize i18n
+            let i18nInstance;
+            
+            async function initI18n() {
+                i18nInstance = await i18n.init();
+                updateLanguageButton();
+            }
+            
+            async function changeLanguage(locale) {
+                await i18nInstance.changeLocale(locale);
+                window.location.reload();
+            }
+            
+            function updateLanguageButton() {
+                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
+                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
+                
+                const currentLang = i18nInstance.currentLocale;
+                const flagEl = document.getElementById('currentFlag');
+                const langEl = document.getElementById('currentLang');
+                const htmlTag = document.getElementById('htmlTag');
+                
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
+                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
+                if (htmlTag) htmlTag.lang = currentLang;
+            }
+            
+            // Toggle dropdown
+            document.addEventListener('click', (e) => {
+                const btn = document.getElementById('langBtn');
+                const dropdown = document.getElementById('langDropdown');
+                
+                if (btn && btn.contains(e.target)) {
+                    dropdown.classList.toggle('hidden');
+                } else if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            
+            // Initialize on load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initI18n);
+            } else {
+                initI18n();
+            }
+        </script>
     </body>
     </html>
   `)
@@ -1884,7 +2129,7 @@ pages.get('/imoveis/:id', (c) => {
 pages.get('/cadastrar-imovel', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <html lang="pt-BR">
+    <html lang="pt-BR" id="htmlTag">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1908,6 +2153,7 @@ pages.get('/cadastrar-imovel', (c) => {
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
           body { font-family: 'Inter', sans-serif; }
         </style>
+        <script src="/i18n.js"></script>
     </head>
     <body class="bg-gray-50">
         <!-- Navigation -->
@@ -2305,6 +2551,54 @@ pages.get('/cadastrar-imovel', (c) => {
             alertDiv.classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }
+        </script>
+
+        <script>
+            // Initialize i18n
+            let i18nInstance;
+            
+            async function initI18n() {
+                i18nInstance = await i18n.init();
+                updateLanguageButton();
+            }
+            
+            async function changeLanguage(locale) {
+                await i18nInstance.changeLocale(locale);
+                window.location.reload();
+            }
+            
+            function updateLanguageButton() {
+                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
+                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
+                
+                const currentLang = i18nInstance.currentLocale;
+                const flagEl = document.getElementById('currentFlag');
+                const langEl = document.getElementById('currentLang');
+                const htmlTag = document.getElementById('htmlTag');
+                
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
+                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
+                if (htmlTag) htmlTag.lang = currentLang;
+            }
+            
+            // Toggle dropdown
+            document.addEventListener('click', (e) => {
+                const btn = document.getElementById('langBtn');
+                const dropdown = document.getElementById('langDropdown');
+                
+                if (btn && btn.contains(e.target)) {
+                    dropdown.classList.toggle('hidden');
+                } else if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            
+            // Initialize on load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initI18n);
+            } else {
+                initI18n();
+            }
         </script>
     </body>
     </html>

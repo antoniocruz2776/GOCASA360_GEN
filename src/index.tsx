@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { i18nCode, translations } from './i18n-data'
 import imoveis from './routes/imoveis'
 import pages from './routes/pages'
 import auth from './routes/auth'
@@ -12,6 +13,32 @@ type Bindings = {
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
+
+// Serve i18n JavaScript file
+app.get('/i18n.js', (c) => {
+  return c.text(i18nCode, 200, { 
+    'Content-Type': 'application/javascript',
+    'Cache-Control': 'public, max-age=3600'
+  })
+})
+
+// Serve i18n translation files
+app.get('/i18n/:locale', (c) => {
+  let locale = c.req.param('locale')
+  
+  // Remove .json extension if present
+  locale = locale.replace('.json', '') as 'pt-BR' | 'it-IT' | 'en-US'
+  
+  const data = translations[locale]
+  
+  if (!data) {
+    return c.json({ error: 'Locale not found' }, 404)
+  }
+  
+  return c.json(data, 200, {
+    'Cache-Control': 'public, max-age=3600'
+  })
+})
 
 // Enable CORS for API routes
 app.use('/api/*', cors())
