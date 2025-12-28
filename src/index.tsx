@@ -3,6 +3,9 @@ import { cors } from 'hono/cors'
 import imoveis from './routes/imoveis'
 import pages from './routes/pages'
 import auth from './routes/auth'
+import favoritos from './routes/favoritos'
+import visitas from './routes/visitas'
+import propostas from './routes/propostas'
 
 type Bindings = {
   DB: D1Database;
@@ -25,6 +28,9 @@ app.get('/api/health', (c) => {
 // API Routes
 app.route('/api/auth', auth)
 app.route('/api/imoveis', imoveis)
+app.route('/api/favoritos', favoritos)
+app.route('/api/visitas', visitas)
+app.route('/api/propostas', propostas)
 
 // Page Routes
 app.route('/', pages)

@@ -1012,4 +1012,628 @@ pages.get('/cadastro', (c) => {
   `)
 })
 
+// Página de Detalhes do Imóvel
+pages.get('/imoveis/:id', (c) => {
+  const imovelId = c.req.param('id')
+  
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Detalhes do Imóvel - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <script>
+          tailwind.config = {
+            theme: {
+              extend: {
+                colors: {
+                  primary: '#2563eb',
+                  secondary: '#0ea5e9'
+                }
+              }
+            }
+          }
+        </script>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+          body { font-family: 'Inter', sans-serif; }
+          
+          .gallery-img {
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+          
+          .gallery-img:hover {
+            transform: scale(1.05);
+          }
+          
+          /* Lightbox styles */
+          .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+          }
+          
+          .lightbox.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+          }
+        </style>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <a href="/" class="flex items-center space-x-2">
+                        <i class="fas fa-home text-3xl text-primary"></i>
+                        <span class="text-2xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                    </a>
+                    <div class="flex items-center space-x-4">
+                        <a href="/imoveis" class="text-gray-700 hover:text-primary transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Voltar
+                        </a>
+                        <a href="/login" id="loginBtn" class="text-primary hover:text-secondary transition font-semibold">Entrar</a>
+                        <a href="/cadastro" id="cadastroBtn" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold hidden">Cadastrar</a>
+                        <div id="userMenu" class="hidden">
+                            <button id="logoutBtn" class="text-red-600 hover:text-red-800 transition font-semibold">
+                                <i class="fas fa-sign-out-alt mr-1"></i> Sair
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Loading State -->
+        <div id="loading" class="max-w-7xl mx-auto px-4 py-12 text-center">
+            <i class="fas fa-spinner fa-spin text-4xl text-primary"></i>
+            <p class="mt-4 text-gray-600">Carregando imóvel...</p>
+        </div>
+
+        <!-- Content -->
+        <div id="content" class="hidden">
+            <!-- Hero/Gallery Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="lg:col-span-2">
+                        <img id="mainImage" src="" alt="" class="w-full h-96 object-cover rounded-xl cursor-pointer" onclick="openLightbox(this.src)">
+                        <div id="thumbs" class="grid grid-cols-4 gap-2 mt-4">
+                            <!-- Thumbnails will be inserted here -->
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div id="priceSection"></div>
+                        
+                        <button id="favoritoBtn" class="w-full mt-4 py-3 border-2 border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition font-semibold">
+                            <i class="far fa-heart mr-2"></i> <span id="favoritoText">Favoritar</span>
+                        </button>
+                        
+                        <button onclick="mostrarAgendarVisita()" class="w-full mt-2 py-3 bg-secondary text-white rounded-lg hover:bg-blue-600 transition font-semibold">
+                            <i class="fas fa-calendar-check mr-2"></i> Agendar Visita
+                        </button>
+                        
+                        <button onclick="mostrarFazerProposta()" class="w-full mt-2 py-3 bg-accent text-white rounded-lg hover:bg-yellow-600 transition font-semibold">
+                            <i class="fas fa-hand-holding-usd mr-2"></i> Fazer Proposta
+                        </button>
+                        
+                        <div class="mt-6 pt-6 border-t">
+                            <h4 class="font-bold text-gray-900 mb-3">Proprietário</h4>
+                            <div id="proprietarioInfo"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details Section -->
+            <div class="bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2">
+                            <h1 id="titulo" class="text-4xl font-bold text-gray-900 mb-4"></h1>
+                            <p id="endereco" class="text-xl text-gray-600 mb-6">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
+                            </p>
+                            
+                            <div id="caracteristicas" class="flex flex-wrap gap-6 mb-8">
+                                <!-- Características serão inseridas aqui -->
+                            </div>
+                            
+                            <div class="prose max-w-none">
+                                <h2 class="text-2xl font-bold text-gray-900 mb-4">Sobre este imóvel</h2>
+                                <p id="descricao" class="text-gray-700 leading-relaxed"></p>
+                            </div>
+                            
+                            <div id="comodidades" class="mt-8">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-4">Comodidades</h3>
+                                <div id="comodidadesList" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <!-- Comodidades serão inseridas aqui -->
+                                </div>
+                            </div>
+                            
+                            <!-- Mapa -->
+                            <div class="mt-8">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-4">Localização</h3>
+                                <div id="mapa" class="bg-gray-200 h-96 rounded-xl flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-map-marked-alt text-6xl text-gray-400 mb-4"></i>
+                                        <p class="text-gray-600" id="enderecoCompleto"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="bg-gray-50 rounded-xl p-6 sticky top-24">
+                                <h3 class="text-xl font-bold text-gray-900 mb-4">Informações Adicionais</h3>
+                                <div id="infoAdicional" class="space-y-3 text-sm">
+                                    <!-- Info adicional será inserida aqui -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+            <span class="absolute top-4 right-4 text-white text-4xl cursor-pointer">&times;</span>
+            <img id="lightboxImg" class="lightbox-content" src="" alt="">
+        </div>
+
+        <!-- Modal Agendar Visita -->
+        <div id="modalVisita" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6" onclick="event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">Agendar Visita</h3>
+                <form id="formVisita">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Data e Hora</label>
+                        <input type="datetime-local" id="dataHoraVisita" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Observações</label>
+                        <textarea id="observacoesVisita" rows="3"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                                  placeholder="Deixe um comentário (opcional)"></textarea>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="fecharModal('modalVisita')"
+                                class="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                class="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition">
+                            Agendar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal Fazer Proposta -->
+        <div id="modalProposta" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6" onclick="event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">Fazer Proposta</h3>
+                <form id="formProposta">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                        <select id="tipoProposta" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            <option value="">Selecione...</option>
+                            <option value="aluguel">Aluguel</option>
+                            <option value="compra">Compra</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Valor Proposto (R$)</label>
+                        <input type="number" id="valorProposta" required step="0.01"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                               placeholder="0.00">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mensagem</label>
+                        <textarea id="mensagemProposta" rows="3"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                                  placeholder="Deixe um comentário (opcional)"></textarea>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="fecharModal('modalProposta')"
+                                class="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                class="flex-1 py-2 bg-accent text-white rounded-lg hover:bg-yellow-600 transition">
+                            Enviar Proposta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+          const imovelId = '${imovelId}';
+          let imovelData = null;
+          let usuario = null;
+          let token = null;
+
+          // Verificar autenticação
+          document.addEventListener('DOMContentLoaded', () => {
+            const storedToken = localStorage.getItem('token');
+            const storedUsuario = localStorage.getItem('usuario');
+            
+            if (storedToken && storedUsuario) {
+              token = storedToken;
+              usuario = JSON.parse(storedUsuario);
+              document.getElementById('loginBtn').classList.add('hidden');
+              document.getElementById('cadastroBtn').classList.add('hidden');
+              document.getElementById('userMenu').classList.remove('hidden');
+            }
+            
+            carregarImovel();
+            
+            if (token) {
+              verificarFavorito();
+            }
+          });
+
+          // Logout
+          document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            if (token) {
+              await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: { 'Authorization': \`Bearer \${token}\` }
+              });
+            }
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            window.location.href = '/';
+          });
+
+          async function carregarImovel() {
+            try {
+              const response = await fetch(\`/api/imoveis/\${imovelId}\`);
+              const data = await response.json();
+              
+              if (data.success) {
+                imovelData = data.data;
+                renderImovel(imovelData);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('content').classList.remove('hidden');
+              } else {
+                alert('Imóvel não encontrado');
+                window.location.href = '/imoveis';
+              }
+            } catch (error) {
+              console.error('Erro:', error);
+              alert('Erro ao carregar imóvel');
+            }
+          }
+
+          function renderImovel(imovel) {
+            // Título e endereço
+            document.getElementById('titulo').textContent = imovel.titulo;
+            document.getElementById('endereco').innerHTML = \`
+              <i class="fas fa-map-marker-alt mr-2"></i>
+              \${imovel.endereco_bairro}, \${imovel.endereco_cidade} - \${imovel.endereco_estado}
+            \`;
+            
+            // Preço
+            const priceHtml = imovel.finalidade === 'venda' || (imovel.finalidade === 'ambos' && imovel.preco_venda)
+              ? \`<div class="text-3xl font-bold text-primary">R$ \${formatNumber(imovel.preco_venda)}</div>
+                 <div class="text-sm text-gray-600 mt-1">Venda</div>\`
+              : \`<div class="text-3xl font-bold text-primary">R$ \${formatNumber(imovel.preco_aluguel)}/mês</div>
+                 <div class="text-sm text-gray-600 mt-1">Aluguel</div>\`;
+            
+            if (imovel.condominio > 0) {
+              document.getElementById('priceSection').innerHTML = priceHtml + \`
+                <div class="text-sm text-gray-600 mt-2">+ R$ \${formatNumber(imovel.condominio)} condomínio</div>
+              \`;
+            } else {
+              document.getElementById('priceSection').innerHTML = priceHtml;
+            }
+            
+            // Galeria
+            const fotos = [imovel.foto_capa];
+            document.getElementById('mainImage').src = fotos[0];
+            
+            // Características
+            document.getElementById('caracteristicas').innerHTML = \`
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-bed text-2xl text-primary mr-2"></i>
+                <div>
+                  <div class="text-2xl font-bold">\${imovel.quartos}</div>
+                  <div class="text-sm">Quartos</div>
+                </div>
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-bath text-2xl text-primary mr-2"></i>
+                <div>
+                  <div class="text-2xl font-bold">\${imovel.banheiros}</div>
+                  <div class="text-sm">Banheiros</div>
+                </div>
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-car text-2xl text-primary mr-2"></i>
+                <div>
+                  <div class="text-2xl font-bold">\${imovel.vagas_garagem}</div>
+                  <div class="text-sm">Vagas</div>
+                </div>
+              </div>
+              <div class="flex items-center text-gray-700">
+                <i class="fas fa-ruler-combined text-2xl text-primary mr-2"></i>
+                <div>
+                  <div class="text-2xl font-bold">\${imovel.area_util}m²</div>
+                  <div class="text-sm">Área Útil</div>
+                </div>
+              </div>
+            \`;
+            
+            // Descrição
+            document.getElementById('descricao').textContent = imovel.descricao;
+            
+            // Comodidades
+            if (imovel.comodidades && imovel.comodidades.length > 0) {
+              document.getElementById('comodidadesList').innerHTML = imovel.comodidades.map(c => \`
+                <div class="flex items-center text-gray-700">
+                  <i class="fas fa-check-circle text-primary mr-2"></i>
+                  <span>\${formatComodidade(c)}</span>
+                </div>
+              \`).join('');
+            } else {
+              document.getElementById('comodidades').classList.add('hidden');
+            }
+            
+            // Proprietário
+            document.getElementById('proprietarioInfo').innerHTML = \`
+              <p class="font-medium text-gray-900">\${imovel.proprietario_nome}</p>
+              <p class="text-gray-600 text-sm mt-1">
+                <i class="fas fa-phone mr-1"></i> \${imovel.proprietario_telefone || 'Não informado'}
+              </p>
+            \`;
+            
+            // Info adicional
+            document.getElementById('infoAdicional').innerHTML = \`
+              <div><strong>Tipo:</strong> \${formatTipo(imovel.tipo)}</div>
+              <div><strong>Finalidade:</strong> \${formatFinalidade(imovel.finalidade)}</div>
+              <div><strong>Área Total:</strong> \${imovel.area_total}m²</div>
+              <div><strong>Mobiliado:</strong> \${imovel.mobiliado ? 'Sim' : 'Não'}</div>
+              <div><strong>Pet Friendly:</strong> \${imovel.pet_friendly ? 'Sim' : 'Não'}</div>
+              <div><strong>IPTU:</strong> R$ \${formatNumber(imovel.iptu)}/mês</div>
+              <div><strong>Visualizações:</strong> \${imovel.visualizacoes}</div>
+            \`;
+            
+            // Endereço completo
+            document.getElementById('enderecoCompleto').textContent = 
+              \`\${imovel.endereco_rua}, \${imovel.endereco_numero} - \${imovel.endereco_bairro}, \${imovel.endereco_cidade}/\${imovel.endereco_estado}\`;
+          }
+
+          async function verificarFavorito() {
+            try {
+              const response = await fetch(\`/api/favoritos/check/\${imovelId}\`, {
+                headers: { 'Authorization': \`Bearer \${token}\` }
+              });
+              const data = await response.json();
+              
+              if (data.favoritado) {
+                document.getElementById('favoritoBtn').innerHTML = '<i class="fas fa-heart mr-2"></i> Favoritado';
+                document.getElementById('favoritoBtn').classList.remove('border-primary', 'text-primary');
+                document.getElementById('favoritoBtn').classList.add('bg-red-500', 'text-white', 'border-red-500');
+              }
+            } catch (error) {
+              console.error('Erro ao verificar favorito:', error);
+            }
+          }
+
+          document.getElementById('favoritoBtn').addEventListener('click', async () => {
+            if (!token) {
+              alert('Você precisa estar logado para favoritar imóveis');
+              window.location.href = '/login';
+              return;
+            }
+            
+            const btn = document.getElementById('favoritoBtn');
+            const isFavorited = btn.innerHTML.includes('Favoritado');
+            
+            try {
+              if (isFavorited) {
+                await fetch(\`/api/favoritos/\${imovelId}\`, {
+                  method: 'DELETE',
+                  headers: { 'Authorization': \`Bearer \${token}\` }
+                });
+                btn.innerHTML = '<i class="far fa-heart mr-2"></i> Favoritar';
+                btn.classList.add('border-primary', 'text-primary');
+                btn.classList.remove('bg-red-500', 'text-white', 'border-red-500');
+              } else {
+                await fetch('/api/favoritos', {
+                  method: 'POST',
+                  headers: { 
+                    'Authorization': \`Bearer \${token}\`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ imovel_id: imovelId })
+                });
+                btn.innerHTML = '<i class="fas fa-heart mr-2"></i> Favoritado';
+                btn.classList.remove('border-primary', 'text-primary');
+                btn.classList.add('bg-red-500', 'text-white', 'border-red-500');
+              }
+            } catch (error) {
+              console.error('Erro:', error);
+              alert('Erro ao processar favorito');
+            }
+          });
+
+          function mostrarAgendarVisita() {
+            if (!token) {
+              alert('Você precisa estar logado para agendar visitas');
+              window.location.href = '/login';
+              return;
+            }
+            document.getElementById('modalVisita').classList.remove('hidden');
+          }
+
+          function mostrarFazerProposta() {
+            if (!token) {
+              alert('Você precisa estar logado para fazer propostas');
+              window.location.href = '/login';
+              return;
+            }
+            document.getElementById('modalProposta').classList.remove('hidden');
+          }
+
+          function fecharModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+          }
+
+          document.getElementById('formVisita').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dataHora = document.getElementById('dataHoraVisita').value;
+            const observacoes = document.getElementById('observacoesVisita').value;
+            
+            try {
+              const response = await fetch('/api/visitas', {
+                method: 'POST',
+                headers: {
+                  'Authorization': \`Bearer \${token}\`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  imovel_id: imovelId,
+                  data_hora: dataHora,
+                  observacoes: observacoes
+                })
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                alert('Visita agendada com sucesso!');
+                fecharModal('modalVisita');
+                document.getElementById('formVisita').reset();
+              } else {
+                alert(data.error || 'Erro ao agendar visita');
+              }
+            } catch (error) {
+              console.error('Erro:', error);
+              alert('Erro ao agendar visita');
+            }
+          });
+
+          document.getElementById('formProposta').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const tipo = document.getElementById('tipoProposta').value;
+            const valor = document.getElementById('valorProposta').value;
+            const mensagem = document.getElementById('mensagemProposta').value;
+            
+            try {
+              const response = await fetch('/api/propostas', {
+                method: 'POST',
+                headers: {
+                  'Authorization': \`Bearer \${token}\`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  imovel_id: imovelId,
+                  tipo: tipo,
+                  valor_proposto: parseFloat(valor),
+                  mensagem: mensagem
+                })
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                alert('Proposta enviada com sucesso!');
+                fecharModal('modalProposta');
+                document.getElementById('formProposta').reset();
+              } else {
+                alert(data.error || 'Erro ao enviar proposta');
+              }
+            } catch (error) {
+              console.error('Erro:', error);
+              alert('Erro ao enviar proposta');
+            }
+          });
+
+          function openLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightbox').classList.add('active');
+          }
+
+          function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+          }
+
+          function formatNumber(num) {
+            return new Intl.NumberFormat('pt-BR').format(num);
+          }
+
+          function formatTipo(tipo) {
+            const tipos = {
+              apartamento: 'Apartamento',
+              casa: 'Casa',
+              kitnet: 'Kitnet',
+              cobertura: 'Cobertura',
+              terreno: 'Terreno',
+              comercial: 'Comercial',
+              rural: 'Rural'
+            };
+            return tipos[tipo] || tipo;
+          }
+
+          function formatFinalidade(finalidade) {
+            const finalidades = {
+              aluguel: 'Aluguel',
+              venda: 'Venda',
+              ambos: 'Aluguel e Venda'
+            };
+            return finalidades[finalidade] || finalidade;
+          }
+
+          function formatComodidade(comodidade) {
+            const comodidades = {
+              piscina: 'Piscina',
+              academia: 'Academia',
+              churrasqueira: 'Churrasqueira',
+              salao_festas: 'Salão de Festas',
+              playground: 'Playground',
+              quadra: 'Quadra Esportiva',
+              elevador: 'Elevador',
+              portaria_24h: 'Portaria 24h',
+              quintal: 'Quintal',
+              area_gourmet: 'Área Gourmet',
+              coworking: 'Coworking',
+              lavanderia: 'Lavanderia',
+              sauna: 'Sauna',
+              piscina_privativa: 'Piscina Privativa',
+              academia_privativa: 'Academia Privativa',
+              adega: 'Adega',
+              home_theater: 'Home Theater',
+              despensa: 'Despensa'
+            };
+            return comodidades[comodidade] || comodidade;
+          }
+        </script>
+    </body>
+    </html>
+  `)
+})
+
 export default pages
