@@ -13,14 +13,17 @@ pages.get('/imoveis', (c) => {
         <title>Buscar Imóveis - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
         <script>
           tailwind.config = {
             theme: {
               extend: {
                 colors: {
-                  primary: '#2563eb',
-                  secondary: '#0ea5e9',
-                  accent: '#f59e0b',
+                  primary: '#1976D2',      // Azul da logo GoCasa360
+                  secondary: '#0ea5e9',    // Azul claro
+                  accent: '#f59e0b',       // Amarelo/dourado para destaques
+                  success: '#28A745',      // Verde da logo
+                  danger: '#DC3545',       // Vermelho da logo
                   dark: '#1e293b',
                   light: '#f1f5f9'
                 }
@@ -59,17 +62,16 @@ pages.get('/imoveis', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center space-x-2">
-                        <i class="fas fa-home text-3xl text-primary"></i>
-                        <span class="text-2xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
                     </a>
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="/imoveis" class="text-primary font-semibold">Buscar Imóveis</a>
-                        <a href="#" class="text-gray-700 hover:text-primary transition">Anunciar</a>
-                        <a href="#" class="text-gray-700 hover:text-primary transition">Sobre</a>
+                        <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition">Buscar Imóveis</a>
+                        <a href="/cadastrar-imovel" class="text-gray-700 hover:text-primary transition">Anunciar</a>
+                        <a href="#sobre" class="text-gray-700 hover:text-primary transition">Sobre</a>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <button class="text-primary hover:text-secondary transition font-semibold">Entrar</button>
-                        <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold">Cadastrar</button>
+                        <a href="/login" class="text-primary hover:text-secondary transition font-semibold">Entrar</a>
+                        <a href="/cadastro" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold shadow-sm">Cadastrar</a>
                     </div>
                 </div>
             </div>
@@ -428,14 +430,17 @@ pages.get('/', (c) => {
         <meta name="description" content="Plataforma completa para aluguel e venda de imóveis. Encontre seu lar ideal com tecnologia e segurança.">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
         <script>
           tailwind.config = {
             theme: {
               extend: {
                 colors: {
-                  primary: '#2563eb',
-                  secondary: '#0ea5e9',
-                  accent: '#f59e0b',
+                  primary: '#1976D2',      // Azul da logo GoCasa360
+                  secondary: '#0ea5e9',    // Azul claro
+                  accent: '#f59e0b',       // Amarelo/dourado para destaques
+                  success: '#28A745',      // Verde da logo
+                  danger: '#DC3545',       // Vermelho da logo
                   dark: '#1e293b',
                   light: '#f1f5f9'
                 }
@@ -481,18 +486,17 @@ pages.get('/', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center space-x-2">
-                        <i class="fas fa-home text-3xl text-primary"></i>
-                        <span class="text-2xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
                     </a>
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="/imoveis" class="text-gray-700 hover:text-primary transition">Buscar Imóveis</a>
-                        <a href="#anunciar" class="text-gray-700 hover:text-primary transition">Anunciar</a>
+                        <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition">Buscar Imóveis</a>
+                        <a href="/cadastrar-imovel" class="text-gray-700 hover:text-primary transition">Anunciar</a>
                         <a href="#sobre" class="text-gray-700 hover:text-primary transition">Sobre</a>
                         <a href="#contato" class="text-gray-700 hover:text-primary transition">Contato</a>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <button class="text-primary hover:text-secondary transition font-semibold">Entrar</button>
-                        <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold">Cadastrar</button>
+                        <a href="/login" class="text-primary hover:text-secondary transition font-semibold">Entrar</a>
+                        <a href="/cadastro" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold shadow-sm">Cadastrar</a>
                     </div>
                 </div>
             </div>
@@ -707,9 +711,8 @@ pages.get('/', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid md:grid-cols-4 gap-8 mb-8">
                     <div>
-                        <div class="flex items-center space-x-2 mb-4">
-                            <i class="fas fa-home text-2xl text-primary"></i>
-                            <span class="text-xl font-bold">GOCASA<span class="text-primary">360IT</span></span>
+                        <div class="mb-4">
+                            <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-10 w-auto brightness-0 invert">
                         </div>
                         <p class="text-gray-400">Sua casa, nossa tecnologia</p>
                     </div>
@@ -876,6 +879,7 @@ pages.get('/login', (c) => {
         <title>Login - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
         <script>
           tailwind.config = {
             theme: {
@@ -897,9 +901,8 @@ pages.get('/login', (c) => {
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
                 <div class="text-center">
-                    <a href="/" class="flex items-center justify-center space-x-2 mb-6">
-                        <i class="fas fa-home text-4xl text-primary"></i>
-                        <span class="text-3xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                    <a href="/" class="flex items-center justify-center mb-8">
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-16 w-auto">
                     </a>
                     <h2 class="text-3xl font-bold text-gray-900">Entrar na sua conta</h2>
                     <p class="mt-2 text-sm text-gray-600">
@@ -1031,6 +1034,7 @@ pages.get('/cadastro', (c) => {
         <title>Cadastro - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
         <script>
           tailwind.config = {
             theme: {
@@ -1052,9 +1056,8 @@ pages.get('/cadastro', (c) => {
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
                 <div class="text-center">
-                    <a href="/" class="flex items-center justify-center space-x-2 mb-6">
-                        <i class="fas fa-home text-4xl text-primary"></i>
-                        <span class="text-3xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                    <a href="/" class="flex items-center justify-center mb-8">
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-16 w-auto">
                     </a>
                     <h2 class="text-3xl font-bold text-gray-900">Criar conta</h2>
                     <p class="mt-2 text-sm text-gray-600">
@@ -1266,6 +1269,7 @@ pages.get('/imoveis/:id', (c) => {
         <title>Detalhes do Imóvel - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
         <script>
           tailwind.config = {
             theme: {
@@ -1321,15 +1325,14 @@ pages.get('/imoveis/:id', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center space-x-2">
-                        <i class="fas fa-home text-3xl text-primary"></i>
-                        <span class="text-2xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
                     </a>
                     <div class="flex items-center space-x-4">
                         <a href="/imoveis" class="text-gray-700 hover:text-primary transition">
                             <i class="fas fa-arrow-left mr-2"></i> Voltar
                         </a>
                         <a href="/login" id="loginBtn" class="text-primary hover:text-secondary transition font-semibold">Entrar</a>
-                        <a href="/cadastro" id="cadastroBtn" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold hidden">Cadastrar</a>
+                        <a href="/cadastro" id="cadastroBtn" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold shadow-sm hidden">Cadastrar</a>
                         <div id="userMenu" class="hidden">
                             <button id="logoutBtn" class="text-red-600 hover:text-red-800 transition font-semibold">
                                 <i class="fas fa-sign-out-alt mr-1"></i> Sair
@@ -1888,6 +1891,7 @@ pages.get('/cadastrar-imovel', (c) => {
         <title>Cadastrar Imóvel - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
         <script>
           tailwind.config = {
             theme: {
@@ -1911,8 +1915,7 @@ pages.get('/cadastrar-imovel', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center space-x-2">
-                        <i class="fas fa-home text-3xl text-primary"></i>
-                        <span class="text-2xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
                     </a>
                     <div class="flex items-center space-x-4">
                         <a href="/" class="text-gray-700 hover:text-primary transition">
