@@ -136,6 +136,128 @@ export const translations = {
       "perMonth": "/mês",
       "currency": "R$",
       "locale": "pt-BR"
+    },
+    "admin": {
+      "title": "Painel de Administração",
+      "dashboard": "Dashboard",
+      "users": "Usuários",
+      "properties": "Imóveis",
+      "proposals": "Propostas",
+      "visits": "Visitas",
+      "stats": {
+        "totalUsers": "Total de Usuários",
+        "activeUsers": "Usuários Ativos",
+        "totalProperties": "Total de Imóveis",
+        "availableProperties": "Imóveis Disponíveis",
+        "featuredProperties": "Imóveis em Destaque",
+        "totalViews": "Visualizações Totais",
+        "pendingProposals": "Propostas Pendentes",
+        "pendingVisits": "Visitas Pendentes"
+      },
+      "userManagement": {
+        "title": "Gerenciamento de Usuários",
+        "search": "Buscar usuário...",
+        "filterByType": "Filtrar por tipo",
+        "filterByStatus": "Filtrar por status",
+        "active": "Ativo",
+        "inactive": "Inativo",
+        "allTypes": "Todos os tipos",
+        "name": "Nome",
+        "email": "Email",
+        "type": "Tipo",
+        "status": "Status",
+        "documents": "Documentos",
+        "verified": "Verificado",
+        "notVerified": "Não Verificado",
+        "actions": "Ações",
+        "edit": "Editar",
+        "delete": "Excluir",
+        "activate": "Ativar",
+        "deactivate": "Desativar",
+        "verifyDocs": "Verificar Documentos",
+        "makeAdmin": "Tornar Admin",
+        "types": {
+          "proprietario": "Proprietário",
+          "inquilino": "Inquilino",
+          "corretor": "Corretor",
+          "admin": "Administrador"
+        }
+      },
+      "propertyManagement": {
+        "title": "Gerenciamento de Imóveis",
+        "search": "Buscar imóvel...",
+        "filterByType": "Filtrar por tipo",
+        "filterByStatus": "Filtrar por status",
+        "available": "Disponível",
+        "unavailable": "Indisponível",
+        "featured": "Destaque",
+        "allStatus": "Todos os status",
+        "propertyTitle": "Título",
+        "owner": "Proprietário",
+        "city": "Cidade",
+        "price": "Preço",
+        "views": "Visualizações",
+        "actions": "Ações",
+        "edit": "Editar",
+        "delete": "Excluir",
+        "setFeatured": "Destacar",
+        "removeFeatured": "Remover Destaque",
+        "makeAvailable": "Disponibilizar",
+        "makeUnavailable": "Tornar Indisponível"
+      },
+      "proposalManagement": {
+        "title": "Gerenciamento de Propostas",
+        "filterByStatus": "Filtrar por status",
+        "allStatus": "Todos os status",
+        "property": "Imóvel",
+        "buyer": "Comprador/Inquilino",
+        "owner": "Proprietário",
+        "type": "Tipo",
+        "value": "Valor Proposto",
+        "status": "Status",
+        "date": "Data",
+        "actions": "Ações",
+        "viewDetails": "Ver Detalhes",
+        "statuses": {
+          "pendente": "Pendente",
+          "aceita": "Aceita",
+          "recusada": "Recusada",
+          "contra_proposta": "Contra-proposta"
+        }
+      },
+      "visitManagement": {
+        "title": "Gerenciamento de Visitas",
+        "filterByStatus": "Filtrar por status",
+        "filterByDate": "Filtrar por data",
+        "allStatus": "Todos os status",
+        "property": "Imóvel",
+        "visitor": "Visitante",
+        "owner": "Proprietário",
+        "dateTime": "Data/Hora",
+        "status": "Status",
+        "actions": "Ações",
+        "viewDetails": "Ver Detalhes",
+        "statuses": {
+          "pendente": "Pendente",
+          "confirmada": "Confirmada",
+          "cancelada": "Cancelada",
+          "realizada": "Realizada"
+        }
+      },
+      "actions": {
+        "save": "Salvar",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar",
+        "delete": "Excluir",
+        "edit": "Editar",
+        "back": "Voltar"
+      },
+      "messages": {
+        "deleteConfirm": "Tem certeza que deseja excluir este item?",
+        "deleteSuccess": "Item excluído com sucesso",
+        "updateSuccess": "Item atualizado com sucesso",
+        "error": "Erro ao processar solicitação"
+      }
     }
   },
   'it-IT': {
@@ -274,6 +396,128 @@ export const translations = {
       "perMonth": "/mese",
       "currency": "€",
       "locale": "it-IT"
+    },
+    "admin": {
+      "title": "Pannello di Amministrazione",
+      "dashboard": "Dashboard",
+      "users": "Utenti",
+      "properties": "Immobili",
+      "proposals": "Proposte",
+      "visits": "Visite",
+      "stats": {
+        "totalUsers": "Totale Utenti",
+        "activeUsers": "Utenti Attivi",
+        "totalProperties": "Totale Immobili",
+        "availableProperties": "Immobili Disponibili",
+        "featuredProperties": "Immobili in Evidenza",
+        "totalViews": "Visualizzazioni Totali",
+        "pendingProposals": "Proposte in Attesa",
+        "pendingVisits": "Visite in Attesa"
+      },
+      "userManagement": {
+        "title": "Gestione Utenti",
+        "search": "Cerca utente...",
+        "filterByType": "Filtra per tipo",
+        "filterByStatus": "Filtra per stato",
+        "active": "Attivo",
+        "inactive": "Inattivo",
+        "allTypes": "Tutti i tipi",
+        "name": "Nome",
+        "email": "Email",
+        "type": "Tipo",
+        "status": "Stato",
+        "documents": "Documenti",
+        "verified": "Verificato",
+        "notVerified": "Non Verificato",
+        "actions": "Azioni",
+        "edit": "Modifica",
+        "delete": "Elimina",
+        "activate": "Attiva",
+        "deactivate": "Disattiva",
+        "verifyDocs": "Verifica Documenti",
+        "makeAdmin": "Rendi Admin",
+        "types": {
+          "proprietario": "Proprietario",
+          "inquilino": "Inquilino",
+          "corretor": "Agente",
+          "admin": "Amministratore"
+        }
+      },
+      "propertyManagement": {
+        "title": "Gestione Immobili",
+        "search": "Cerca immobile...",
+        "filterByType": "Filtra per tipo",
+        "filterByStatus": "Filtra per stato",
+        "available": "Disponibile",
+        "unavailable": "Non Disponibile",
+        "featured": "In Evidenza",
+        "allStatus": "Tutti gli stati",
+        "propertyTitle": "Titolo",
+        "owner": "Proprietario",
+        "city": "Città",
+        "price": "Prezzo",
+        "views": "Visualizzazioni",
+        "actions": "Azioni",
+        "edit": "Modifica",
+        "delete": "Elimina",
+        "setFeatured": "Metti in Evidenza",
+        "removeFeatured": "Rimuovi Evidenza",
+        "makeAvailable": "Rendi Disponibile",
+        "makeUnavailable": "Rendi Non Disponibile"
+      },
+      "proposalManagement": {
+        "title": "Gestione Proposte",
+        "filterByStatus": "Filtra per stato",
+        "allStatus": "Tutti gli stati",
+        "property": "Immobile",
+        "buyer": "Acquirente/Inquilino",
+        "owner": "Proprietario",
+        "type": "Tipo",
+        "value": "Valore Proposto",
+        "status": "Stato",
+        "date": "Data",
+        "actions": "Azioni",
+        "viewDetails": "Vedi Dettagli",
+        "statuses": {
+          "pendente": "In Attesa",
+          "aceita": "Accettata",
+          "recusada": "Rifiutata",
+          "contra_proposta": "Controproposta"
+        }
+      },
+      "visitManagement": {
+        "title": "Gestione Visite",
+        "filterByStatus": "Filtra per stato",
+        "filterByDate": "Filtra per data",
+        "allStatus": "Tutti gli stati",
+        "property": "Immobile",
+        "visitor": "Visitatore",
+        "owner": "Proprietario",
+        "dateTime": "Data/Ora",
+        "status": "Stato",
+        "actions": "Azioni",
+        "viewDetails": "Vedi Dettagli",
+        "statuses": {
+          "pendente": "In Attesa",
+          "confirmada": "Confermata",
+          "cancelada": "Annullata",
+          "realizada": "Completata"
+        }
+      },
+      "actions": {
+        "save": "Salva",
+        "cancel": "Annulla",
+        "confirm": "Conferma",
+        "delete": "Elimina",
+        "edit": "Modifica",
+        "back": "Indietro"
+      },
+      "messages": {
+        "deleteConfirm": "Sei sicuro di voler eliminare questo elemento?",
+        "deleteSuccess": "Elemento eliminato con successo",
+        "updateSuccess": "Elemento aggiornato con successo",
+        "error": "Errore durante l'elaborazione della richiesta"
+      }
     }
   },
   'en-US': {
@@ -412,6 +656,128 @@ export const translations = {
       "perMonth": "/month",
       "currency": "$",
       "locale": "en-US"
+    },
+    "admin": {
+      "title": "Administration Panel",
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "properties": "Properties",
+      "proposals": "Proposals",
+      "visits": "Visits",
+      "stats": {
+        "totalUsers": "Total Users",
+        "activeUsers": "Active Users",
+        "totalProperties": "Total Properties",
+        "availableProperties": "Available Properties",
+        "featuredProperties": "Featured Properties",
+        "totalViews": "Total Views",
+        "pendingProposals": "Pending Proposals",
+        "pendingVisits": "Pending Visits"
+      },
+      "userManagement": {
+        "title": "User Management",
+        "search": "Search user...",
+        "filterByType": "Filter by type",
+        "filterByStatus": "Filter by status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "allTypes": "All types",
+        "name": "Name",
+        "email": "Email",
+        "type": "Type",
+        "status": "Status",
+        "documents": "Documents",
+        "verified": "Verified",
+        "notVerified": "Not Verified",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "verifyDocs": "Verify Documents",
+        "makeAdmin": "Make Admin",
+        "types": {
+          "proprietario": "Owner",
+          "inquilino": "Tenant",
+          "corretor": "Agent",
+          "admin": "Administrator"
+        }
+      },
+      "propertyManagement": {
+        "title": "Property Management",
+        "search": "Search property...",
+        "filterByType": "Filter by type",
+        "filterByStatus": "Filter by status",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "featured": "Featured",
+        "allStatus": "All statuses",
+        "propertyTitle": "Title",
+        "owner": "Owner",
+        "city": "City",
+        "price": "Price",
+        "views": "Views",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "setFeatured": "Set Featured",
+        "removeFeatured": "Remove Featured",
+        "makeAvailable": "Make Available",
+        "makeUnavailable": "Make Unavailable"
+      },
+      "proposalManagement": {
+        "title": "Proposal Management",
+        "filterByStatus": "Filter by status",
+        "allStatus": "All statuses",
+        "property": "Property",
+        "buyer": "Buyer/Tenant",
+        "owner": "Owner",
+        "type": "Type",
+        "value": "Proposed Value",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions",
+        "viewDetails": "View Details",
+        "statuses": {
+          "pendente": "Pending",
+          "aceita": "Accepted",
+          "recusada": "Rejected",
+          "contra_proposta": "Counter-offer"
+        }
+      },
+      "visitManagement": {
+        "title": "Visit Management",
+        "filterByStatus": "Filter by status",
+        "filterByDate": "Filter by date",
+        "allStatus": "All statuses",
+        "property": "Property",
+        "visitor": "Visitor",
+        "owner": "Owner",
+        "dateTime": "Date/Time",
+        "status": "Status",
+        "actions": "Actions",
+        "viewDetails": "View Details",
+        "statuses": {
+          "pendente": "Pending",
+          "confirmada": "Confirmed",
+          "cancelada": "Cancelled",
+          "realizada": "Completed"
+        }
+      },
+      "actions": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "delete": "Delete",
+        "edit": "Edit",
+        "back": "Back"
+      },
+      "messages": {
+        "deleteConfirm": "Are you sure you want to delete this item?",
+        "deleteSuccess": "Item deleted successfully",
+        "updateSuccess": "Item updated successfully",
+        "error": "Error processing request"
+      }
     }
   }
 }

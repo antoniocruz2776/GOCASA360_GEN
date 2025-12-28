@@ -7,6 +7,7 @@ import auth from './routes/auth'
 import favoritos from './routes/favoritos'
 import visitas from './routes/visitas'
 import propostas from './routes/propostas'
+import admin from './routes/admin'
 
 type Bindings = {
   DB: D1Database;
@@ -58,6 +59,7 @@ app.route('/api/imoveis', imoveis)
 app.route('/api/favoritos', favoritos)
 app.route('/api/visitas', visitas)
 app.route('/api/propostas', propostas)
+app.route('/api/admin', admin)
 
 // Page Routes
 app.route('/', pages)

@@ -2644,4 +2644,843 @@ pages.get('/cadastrar-imovel', (c) => {
   `)
 })
 
+// ============================================
+// ADMIN PANEL
+// ============================================
+pages.get('/admin', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="it" id="htmlTag">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title data-i18n="admin.title">Painel de Administração - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="/i18n.js"></script>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Admin Navbar -->
+        <nav class="bg-primary shadow-md sticky top-0 z-50">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                        <span class="text-white text-xl font-bold" data-i18n="admin.title">Admin Panel</span>
+                    </div>
+                    
+                    <!-- Navigation Links -->
+                    <div class="hidden md:flex space-x-6">
+                        <a href="#dashboard" class="text-white hover:text-gray-200 transition admin-nav-link" data-section="dashboard">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            <span data-i18n="admin.dashboard">Dashboard</span>
+                        </a>
+                        <a href="#users" class="text-white hover:text-gray-200 transition admin-nav-link" data-section="users">
+                            <i class="fas fa-users mr-2"></i>
+                            <span data-i18n="admin.users">Usuários</span>
+                        </a>
+                        <a href="#properties" class="text-white hover:text-gray-200 transition admin-nav-link" data-section="properties">
+                            <i class="fas fa-building mr-2"></i>
+                            <span data-i18n="admin.properties">Imóveis</span>
+                        </a>
+                        <a href="#proposals" class="text-white hover:text-gray-200 transition admin-nav-link" data-section="proposals">
+                            <i class="fas fa-handshake mr-2"></i>
+                            <span data-i18n="admin.proposals">Propostas</span>
+                        </a>
+                        <a href="#visits" class="text-white hover:text-gray-200 transition admin-nav-link" data-section="visits">
+                            <i class="fas fa-calendar-check mr-2"></i>
+                            <span data-i18n="admin.visits">Visitas</span>
+                        </a>
+                    </div>
+                    
+                    <!-- User Menu -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Language Selector -->
+                        <div class="relative" id="languageSelector">
+                            <button id="currentLanguageBtn" class="flex items-center space-x-2 text-white hover:bg-secondary px-3 py-2 rounded-lg transition">
+                                <span id="currentFlag" class="text-xl">🇮🇹</span>
+                                <span id="currentLangCode" class="text-sm font-semibold">IT</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div id="languageDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                                <button onclick="changeLanguage('it-IT')" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-3">
+                                    <span class="text-xl">🇮🇹</span>
+                                    <span class="text-gray-700">Italiano</span>
+                                </button>
+                                <button onclick="changeLanguage('pt-BR')" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-3">
+                                    <span class="text-xl">🇧🇷</span>
+                                    <span class="text-gray-700">Português</span>
+                                </button>
+                                <button onclick="changeLanguage('en-US')" class="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-3">
+                                    <span class="text-xl">🇺🇸</span>
+                                    <span class="text-gray-700">English</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <a href="/" class="text-white hover:bg-secondary px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-home mr-2"></i>
+                            <span>Site</span>
+                        </a>
+                        <a href="/login" class="text-white hover:bg-secondary px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            <span>Sair</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container mx-auto px-4 py-8">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="admin-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6" data-i18n="admin.dashboard">Dashboard</h2>
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm" data-i18n="admin.stats.totalUsers">Total de Usuários</p>
+                                <p class="text-3xl font-bold text-gray-800" id="stat-total-users">0</p>
+                            </div>
+                            <i class="fas fa-users text-blue-500 text-3xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm" data-i18n="admin.stats.totalProperties">Total de Imóveis</p>
+                                <p class="text-3xl font-bold text-gray-800" id="stat-total-properties">0</p>
+                            </div>
+                            <i class="fas fa-building text-green-500 text-3xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm" data-i18n="admin.stats.pendingProposals">Propostas Pendentes</p>
+                                <p class="text-3xl font-bold text-gray-800" id="stat-pending-proposals">0</p>
+                            </div>
+                            <i class="fas fa-handshake text-yellow-500 text-3xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm" data-i18n="admin.stats.pendingVisits">Visitas Pendentes</p>
+                                <p class="text-3xl font-bold text-gray-800" id="stat-pending-visits">0</p>
+                            </div>
+                            <i class="fas fa-calendar-check text-purple-500 text-3xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Usuários por Tipo</h3>
+                        <canvas id="usersChart"></canvas>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Status dos Imóveis</h3>
+                        <canvas id="propertiesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users-section" class="admin-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6" data-i18n="admin.userManagement.title">Gerenciamento de Usuários</h2>
+                
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="text" id="user-search" placeholder="Buscar usuário..." 
+                               class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+                               data-i18n-placeholder="admin.userManagement.search">
+                        
+                        <select id="user-type-filter" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <option value="" data-i18n="admin.userManagement.allTypes">Todos os tipos</option>
+                            <option value="proprietario" data-i18n="admin.userManagement.types.proprietario">Proprietário</option>
+                            <option value="inquilino" data-i18n="admin.userManagement.types.inquilino">Inquilino</option>
+                            <option value="corretor" data-i18n="admin.userManagement.types.corretor">Corretor</option>
+                            <option value="admin" data-i18n="admin.userManagement.types.admin">Admin</option>
+                        </select>
+                        
+                        <select id="user-status-filter" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <option value="" data-i18n="admin.userManagement.allTypes">Todos</option>
+                            <option value="1" data-i18n="admin.userManagement.active">Ativo</option>
+                            <option value="0" data-i18n="admin.userManagement.inactive">Inativo</option>
+                        </select>
+                        
+                        <button onclick="loadUsers()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition">
+                            <i class="fas fa-search mr-2"></i>
+                            <span data-i18n="home.filters.search">Buscar</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Users Table -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.userManagement.name">Nome</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.userManagement.email">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.userManagement.type">Tipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.userManagement.status">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.userManagement.documents">Documentos</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.userManagement.actions">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="users-pagination" class="mt-6 flex justify-center"></div>
+            </div>
+
+            <!-- Properties Section -->
+            <div id="properties-section" class="admin-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6" data-i18n="admin.propertyManagement.title">Gerenciamento de Imóveis</h2>
+                
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input type="text" id="property-search" placeholder="Buscar imóvel..." 
+                               class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+                               data-i18n-placeholder="admin.propertyManagement.search">
+                        
+                        <select id="property-type-filter" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <option value="" data-i18n="admin.userManagement.allTypes">Todos os tipos</option>
+                            <option value="apartamento" data-i18n="home.filters.apartment">Apartamento</option>
+                            <option value="casa" data-i18n="home.filters.house">Casa</option>
+                            <option value="kitnet" data-i18n="home.filters.condo">Kitnet</option>
+                            <option value="cobertura" data-i18n="home.filters.penthouse">Cobertura</option>
+                        </select>
+                        
+                        <select id="property-status-filter" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <option value="" data-i18n="admin.propertyManagement.allStatus">Todos</option>
+                            <option value="1" data-i18n="admin.propertyManagement.available">Disponível</option>
+                            <option value="0" data-i18n="admin.propertyManagement.unavailable">Indisponível</option>
+                        </select>
+                        
+                        <button onclick="loadProperties()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition">
+                            <i class="fas fa-search mr-2"></i>
+                            <span data-i18n="home.filters.search">Buscar</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Properties Table -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.propertyManagement.propertyTitle">Título</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.propertyManagement.owner">Proprietário</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.propertyManagement.city">Cidade</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.propertyManagement.price">Preço</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.userManagement.status">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.propertyManagement.actions">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="properties-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="properties-pagination" class="mt-6 flex justify-center"></div>
+            </div>
+
+            <!-- Proposals Section -->
+            <div id="proposals-section" class="admin-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6" data-i18n="admin.proposalManagement.title">Gerenciamento de Propostas</h2>
+                
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <select id="proposal-status-filter" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <option value="" data-i18n="admin.proposalManagement.allStatus">Todos</option>
+                            <option value="pendente" data-i18n="admin.proposalManagement.statuses.pendente">Pendente</option>
+                            <option value="aceita" data-i18n="admin.proposalManagement.statuses.aceita">Aceita</option>
+                            <option value="recusada" data-i18n="admin.proposalManagement.statuses.recusada">Recusada</option>
+                            <option value="contra_proposta" data-i18n="admin.proposalManagement.statuses.contra_proposta">Contraproposta</option>
+                        </select>
+                        
+                        <button onclick="loadProposals()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition">
+                            <i class="fas fa-search mr-2"></i>
+                            <span data-i18n="home.filters.search">Buscar</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Proposals Table -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.proposalManagement.property">Imóvel</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.proposalManagement.buyer">Comprador</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.proposalManagement.value">Valor</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.proposalManagement.status">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.proposalManagement.date">Data</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.proposalManagement.actions">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="proposals-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="proposals-pagination" class="mt-6 flex justify-center"></div>
+            </div>
+
+            <!-- Visits Section -->
+            <div id="visits-section" class="admin-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6" data-i18n="admin.visitManagement.title">Gerenciamento de Visitas</h2>
+                
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <select id="visit-status-filter" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                            <option value="" data-i18n="admin.visitManagement.allStatus">Todos</option>
+                            <option value="pendente" data-i18n="admin.visitManagement.statuses.pendente">Pendente</option>
+                            <option value="confirmada" data-i18n="admin.visitManagement.statuses.confirmada">Confirmada</option>
+                            <option value="cancelada" data-i18n="admin.visitManagement.statuses.cancelada">Cancelada</option>
+                            <option value="realizada" data-i18n="admin.visitManagement.statuses.realizada">Realizada</option>
+                        </select>
+                        
+                        <input type="date" id="visit-date-filter" class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                        
+                        <button onclick="loadVisits()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition">
+                            <i class="fas fa-search mr-2"></i>
+                            <span data-i18n="home.filters.search">Buscar</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Visits Table -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.visitManagement.property">Imóvel</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.visitManagement.visitor">Visitante</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.visitManagement.dateTime">Data/Hora</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.visitManagement.status">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.visitManagement.actions">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visits-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="visits-pagination" class="mt-6 flex justify-center"></div>
+            </div>
+        </div>
+
+        <script>
+            // Initialize i18n
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.I18N) {
+                    window.I18N.init();
+                    updateLanguageButton();
+                }
+                
+                // Load initial data
+                loadDashboardStats();
+                
+                // Setup navigation
+                setupNavigation();
+                
+                // Language selector
+                const langBtn = document.getElementById('currentLanguageBtn');
+                const dropdown = document.getElementById('languageDropdown');
+                
+                if (langBtn && dropdown) {
+                    langBtn.addEventListener('click', () => {
+                        dropdown.classList.toggle('hidden');
+                    });
+                    
+                    document.addEventListener('click', (e) => {
+                        if (!langBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                            dropdown.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+            
+            // Navigation between sections
+            function setupNavigation() {
+                const navLinks = document.querySelectorAll('.admin-nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = link.dataset.section;
+                        showSection(section);
+                    });
+                });
+            }
+            
+            function showSection(sectionName) {
+                // Hide all sections
+                document.querySelectorAll('.admin-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Show selected section
+                const section = document.getElementById(sectionName + '-section');
+                if (section) {
+                    section.classList.remove('hidden');
+                }
+                
+                // Load data for the section
+                switch(sectionName) {
+                    case 'dashboard':
+                        loadDashboardStats();
+                        break;
+                    case 'users':
+                        loadUsers();
+                        break;
+                    case 'properties':
+                        loadProperties();
+                        break;
+                    case 'proposals':
+                        loadProposals();
+                        break;
+                    case 'visits':
+                        loadVisits();
+                        break;
+                }
+            }
+            
+            // Load Dashboard Statistics
+            async function loadDashboardStats() {
+                try {
+                    const response = await axios.get('/api/admin/stats');
+                    if (response.data.success) {
+                        const data = response.data.data;
+                        
+                        // Update stats
+                        const totalUsers = data.usuarios.reduce((sum, u) => sum + u.total, 0);
+                        document.getElementById('stat-total-users').textContent = totalUsers;
+                        document.getElementById('stat-total-properties').textContent = data.imoveis.total || 0;
+                        
+                        const pendingProposals = data.propostas.find(p => p.status === 'pendente');
+                        document.getElementById('stat-pending-proposals').textContent = pendingProposals ? pendingProposals.total : 0;
+                        
+                        const pendingVisits = data.visitas.find(v => v.status === 'pendente');
+                        document.getElementById('stat-pending-visits').textContent = pendingVisits ? pendingVisits.total : 0;
+                        
+                        // Create charts
+                        createUsersChart(data.usuarios);
+                        createPropertiesChart(data.imoveis);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar estatísticas:', error);
+                }
+            }
+            
+            // Create Users Chart
+            function createUsersChart(usuarios) {
+                const ctx = document.getElementById('usersChart');
+                if (!ctx) return;
+                
+                const labels = usuarios.map(u => u.tipo);
+                const values = usuarios.map(u => u.total);
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: [
+                                '#3b82f6',
+                                '#10b981',
+                                '#f59e0b',
+                                '#ef4444'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true
+                    }
+                });
+            }
+            
+            // Create Properties Chart
+            function createPropertiesChart(imoveis) {
+                const ctx = document.getElementById('propertiesChart');
+                if (!ctx) return;
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Total', 'Disponíveis', 'Destaque'],
+                        datasets: [{
+                            label: 'Imóveis',
+                            data: [imoveis.total || 0, imoveis.disponiveis || 0, imoveis.destaque || 0],
+                            backgroundColor: [
+                                '#3b82f6',
+                                '#10b981',
+                                '#f59e0b'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Load Users
+            async function loadUsers(page = 1) {
+                try {
+                    const search = document.getElementById('user-search').value;
+                    const type = document.getElementById('user-type-filter').value;
+                    const status = document.getElementById('user-status-filter').value;
+                    
+                    const params = new URLSearchParams({
+                        page,
+                        limit: 20,
+                        ...(search && { search }),
+                        ...(type && { tipo: type }),
+                        ...(status !== '' && { ativo: status })
+                    });
+                    
+                    const response = await axios.get(\`/api/admin/usuarios?\${params}\`);
+                    if (response.data.success) {
+                        renderUsersTable(response.data.data);
+                        renderPagination('users', response.data.pagination, loadUsers);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar usuários:', error);
+                }
+            }
+            
+            function renderUsersTable(users) {
+                const tbody = document.getElementById('users-table-body');
+                if (!tbody) return;
+                
+                tbody.innerHTML = users.map(user => \`
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">\${user.nome_completo}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">\${user.email}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">\${user.tipo}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full \${user.ativo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                \${user.ativo ? 'Ativo' : 'Inativo'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full \${user.documentos_verificados ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                \${user.documentos_verificados ? 'Verificado' : 'Pendente'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button onclick="toggleUserStatus('\${user.id}', \${!user.ativo})" class="text-blue-600 hover:text-blue-900 mr-3">
+                                <i class="fas fa-\${user.ativo ? 'ban' : 'check'}"></i>
+                            </button>
+                            <button onclick="deleteUser('\${user.id}')" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                \`).join('');
+            }
+            
+            // Load Properties
+            async function loadProperties(page = 1) {
+                try {
+                    const search = document.getElementById('property-search').value;
+                    const type = document.getElementById('property-type-filter').value;
+                    const status = document.getElementById('property-status-filter').value;
+                    
+                    const params = new URLSearchParams({
+                        page,
+                        limit: 20,
+                        ...(search && { search }),
+                        ...(type && { tipo: type }),
+                        ...(status !== '' && { disponivel: status })
+                    });
+                    
+                    const response = await axios.get(\`/api/admin/imoveis?\${params}\`);
+                    if (response.data.success) {
+                        renderPropertiesTable(response.data.data);
+                        renderPagination('properties', response.data.pagination, loadProperties);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar imóveis:', error);
+                }
+            }
+            
+            function renderPropertiesTable(properties) {
+                const tbody = document.getElementById('properties-table-body');
+                if (!tbody) return;
+                
+                tbody.innerHTML = properties.map(prop => \`
+                    <tr>
+                        <td class="px-6 py-4">\${prop.titulo}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">\${prop.proprietario_nome || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">\${prop.endereco_cidade}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            \${prop.preco_venda ? 'R$ ' + prop.preco_venda.toLocaleString('pt-BR') : 'R$ ' + (prop.preco_aluguel || 0).toLocaleString('pt-BR') + '/mês'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full \${prop.disponivel ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                \${prop.disponivel ? 'Disponível' : 'Indisponível'}
+                            </span>
+                            \${prop.destaque ? '<span class="ml-2 px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Destaque</span>' : ''}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button onclick="togglePropertyFeatured('\${prop.id}', \${!prop.destaque})" class="text-yellow-600 hover:text-yellow-900 mr-3" title="Toggle Destaque">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button onclick="togglePropertyAvailability('\${prop.id}', \${!prop.disponivel})" class="text-blue-600 hover:text-blue-900 mr-3" title="Toggle Disponibilidade">
+                                <i class="fas fa-\${prop.disponivel ? 'ban' : 'check'}"></i>
+                            </button>
+                            <button onclick="deleteProperty('\${prop.id}')" class="text-red-600 hover:text-red-900" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                \`).join('');
+            }
+            
+            // Load Proposals
+            async function loadProposals(page = 1) {
+                try {
+                    const status = document.getElementById('proposal-status-filter').value;
+                    
+                    const params = new URLSearchParams({
+                        page,
+                        limit: 20,
+                        ...(status && { status })
+                    });
+                    
+                    const response = await axios.get(\`/api/admin/propostas?\${params}\`);
+                    if (response.data.success) {
+                        renderProposalsTable(response.data.data);
+                        renderPagination('proposals', response.data.pagination, loadProposals);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar propostas:', error);
+                }
+            }
+            
+            function renderProposalsTable(proposals) {
+                const tbody = document.getElementById('proposals-table-body');
+                if (!tbody) return;
+                
+                tbody.innerHTML = proposals.map(prop => \`
+                    <tr>
+                        <td class="px-6 py-4">\${prop.imovel_titulo || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">\${prop.usuario_nome || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">R$ \${prop.valor_proposto.toLocaleString('pt-BR')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">\${prop.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">\${new Date(prop.created_at).toLocaleDateString('pt-BR')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button onclick="viewProposal('\${prop.id}')" class="text-blue-600 hover:text-blue-900">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                \`).join('');
+            }
+            
+            // Load Visits
+            async function loadVisits(page = 1) {
+                try {
+                    const status = document.getElementById('visit-status-filter').value;
+                    const date = document.getElementById('visit-date-filter').value;
+                    
+                    const params = new URLSearchParams({
+                        page,
+                        limit: 20,
+                        ...(status && { status }),
+                        ...(date && { data: date })
+                    });
+                    
+                    const response = await axios.get(\`/api/admin/visitas?\${params}\`);
+                    if (response.data.success) {
+                        renderVisitsTable(response.data.data);
+                        renderPagination('visits', response.data.pagination, loadVisits);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar visitas:', error);
+                }
+            }
+            
+            function renderVisitsTable(visits) {
+                const tbody = document.getElementById('visits-table-body');
+                if (!tbody) return;
+                
+                tbody.innerHTML = visits.map(visit => \`
+                    <tr>
+                        <td class="px-6 py-4">\${visit.imovel_titulo || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">\${visit.usuario_nome || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">\${new Date(visit.data_hora).toLocaleString('pt-BR')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">\${visit.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button onclick="viewVisit('\${visit.id}')" class="text-blue-600 hover:text-blue-900">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                \`).join('');
+            }
+            
+            // Pagination helper
+            function renderPagination(section, pagination, loadFunc) {
+                const container = document.getElementById(section + '-pagination');
+                if (!container) return;
+                
+                const { page, totalPages } = pagination;
+                let html = '';
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    html += \`
+                        <button onclick="\${loadFunc.name}(\${i})" 
+                                class="mx-1 px-4 py-2 rounded \${i === page ? 'bg-primary text-white' : 'bg-gray-200 hover:bg-gray-300'}">
+                            \${i}
+                        </button>
+                    \`;
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            // User Actions
+            async function toggleUserStatus(userId, ativo) {
+                try {
+                    await axios.put(\`/api/admin/usuarios/\${userId}\`, { ativo });
+                    loadUsers();
+                } catch (error) {
+                    console.error('Erro ao atualizar usuário:', error);
+                    alert('Erro ao atualizar usuário');
+                }
+            }
+            
+            async function deleteUser(userId) {
+                if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+                
+                try {
+                    await axios.delete(\`/api/admin/usuarios/\${userId}\`);
+                    loadUsers();
+                } catch (error) {
+                    console.error('Erro ao excluir usuário:', error);
+                    alert('Erro ao excluir usuário');
+                }
+            }
+            
+            // Property Actions
+            async function togglePropertyFeatured(propId, destaque) {
+                try {
+                    await axios.put(\`/api/admin/imoveis/\${propId}\`, { destaque });
+                    loadProperties();
+                } catch (error) {
+                    console.error('Erro ao atualizar imóvel:', error);
+                    alert('Erro ao atualizar imóvel');
+                }
+            }
+            
+            async function togglePropertyAvailability(propId, disponivel) {
+                try {
+                    await axios.put(\`/api/admin/imoveis/\${propId}\`, { disponivel });
+                    loadProperties();
+                } catch (error) {
+                    console.error('Erro ao atualizar imóvel:', error);
+                    alert('Erro ao atualizar imóvel');
+                }
+            }
+            
+            async function deleteProperty(propId) {
+                if (!confirm('Tem certeza que deseja excluir este imóvel?')) return;
+                
+                try {
+                    await axios.delete(\`/api/admin/imoveis/\${propId}\`);
+                    loadProperties();
+                } catch (error) {
+                    console.error('Erro ao excluir imóvel:', error);
+                    alert('Erro ao excluir imóvel');
+                }
+            }
+            
+            // View Details
+            function viewProposal(id) {
+                // TODO: Implement proposal details modal
+                alert('Visualizar proposta: ' + id);
+            }
+            
+            function viewVisit(id) {
+                // TODO: Implement visit details modal
+                alert('Visualizar visita: ' + id);
+            }
+            
+            // Language change
+            function changeLanguage(locale) {
+                if (window.I18N) {
+                    window.I18N.changeLanguage(locale);
+                    updateLanguageButton();
+                    
+                    const dropdown = document.getElementById('languageDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    
+                    setTimeout(() => window.location.reload(), 100);
+                }
+            }
+            
+            function updateLanguageButton() {
+                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
+                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
+                
+                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
+                const flagEl = document.getElementById('currentFlag');
+                const langEl = document.getElementById('currentLangCode');
+                const htmlTag = document.getElementById('htmlTag');
+                
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
+                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
+                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
+            }
+        </script>
+    </body>
+    </html>
+  `)
+})
+
 export default pages
