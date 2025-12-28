@@ -718,19 +718,19 @@ pages.get('/', (c) => {
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                     <div>
                         <div class="stat-number">10K+</div>
-                        <p class="text-gray-600 mt-2">Imóveis Disponíveis</p>
+                        <p class="text-gray-600 mt-2" data-i18n="home.stats.properties">Imóveis Disponíveis</p>
                     </div>
                     <div>
                         <div class="stat-number">50K+</div>
-                        <p class="text-gray-600 mt-2">Usuários Ativos</p>
+                        <p class="text-gray-600 mt-2" data-i18n="home.stats.users">Usuários Ativos</p>
                     </div>
                     <div>
                         <div class="stat-number">98%</div>
-                        <p class="text-gray-600 mt-2">Satisfação</p>
+                        <p class="text-gray-600 mt-2" data-i18n="home.stats.satisfaction">Satisfação</p>
                     </div>
                     <div>
                         <div class="stat-number">24/7</div>
-                        <p class="text-gray-600 mt-2">Suporte</p>
+                        <p class="text-gray-600 mt-2" data-i18n="home.stats.support">Suporte</p>
                     </div>
                 </div>
             </div>
@@ -742,15 +742,15 @@ pages.get('/', (c) => {
                 <div class="text-center mb-12">
                     <h2 class="text-4xl font-bold text-dark mb-4">
                         <i class="fas fa-star text-accent mr-3"></i>
-                        Imóveis em Destaque
+                        <span data-i18n="home.featured.title">Imóveis em Destaque</span>
                     </h2>
-                    <p class="text-xl text-gray-600">Os melhores imóveis selecionados para você</p>
+                    <p class="text-xl text-gray-600" data-i18n="home.featured.subtitle">Os melhores imóveis selecionados para você</p>
                 </div>
                 
                 <!-- Loading -->
                 <div id="destaquesLoading" class="text-center py-12">
                     <i class="fas fa-spinner fa-spin text-4xl text-primary"></i>
-                    <p class="mt-4 text-gray-600">Carregando imóveis...</p>
+                    <p class="mt-4 text-gray-600" data-i18n="common.loading">Carregando...</p>
                 </div>
                 
                 <!-- Grid de Imóveis -->
@@ -760,7 +760,7 @@ pages.get('/', (c) => {
                 
                 <div class="text-center mt-12">
                     <a href="/imoveis" class="inline-block bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition font-semibold text-lg">
-                        <i class="fas fa-search mr-2"></i> Ver Todos os Imóveis
+                        <i class="fas fa-search mr-2"></i> <span data-i18n="home.featured.viewAll">Ver Todos os Imóveis</span>
                     </a>
                 </div>
             </div>
@@ -821,29 +821,29 @@ pages.get('/', (c) => {
                         <div class="mb-4">
                             <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-10 w-auto brightness-0 invert">
                         </div>
-                        <p class="text-gray-400">Sua casa, nossa tecnologia</p>
+                        <p class="text-gray-400" data-i18n="footer.slogan">Sua casa, nossa tecnologia</p>
                     </div>
                     
                     <div>
-                        <h4 class="font-bold mb-4">Imóveis</h4>
+                        <h4 class="font-bold mb-4" data-i18n="footer.properties">Imóveis</h4>
                         <ul class="space-y-2 text-gray-400">
-                            <li><a href="/imoveis?finalidade=aluguel" class="hover:text-white transition">Alugar</a></li>
-                            <li><a href="/imoveis?finalidade=venda" class="hover:text-white transition">Comprar</a></li>
-                            <li><a href="#anunciar" class="hover:text-white transition">Anunciar</a></li>
+                            <li><a href="/imoveis?finalidade=aluguel" class="hover:text-white transition" data-i18n="footer.rent">Alugar</a></li>
+                            <li><a href="/imoveis?finalidade=venda" class="hover:text-white transition" data-i18n="footer.buy">Comprar</a></li>
+                            <li><a href="#anunciar" class="hover:text-white transition" data-i18n="footer.advertise">Anunciar</a></li>
                         </ul>
                     </div>
                     
                     <div>
-                        <h4 class="font-bold mb-4">Empresa</h4>
+                        <h4 class="font-bold mb-4" data-i18n="footer.company">Empresa</h4>
                         <ul class="space-y-2 text-gray-400">
-                            <li><a href="#sobre" class="hover:text-white transition">Sobre Nós</a></li>
-                            <li><a href="#" class="hover:text-white transition">Carreiras</a></li>
-                            <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                            <li><a href="#sobre" class="hover:text-white transition" data-i18n="footer.aboutUs">Sobre Nós</a></li>
+                            <li><a href="#" class="hover:text-white transition" data-i18n="footer.careers">Carreiras</a></li>
+                            <li><a href="#" class="hover:text-white transition" data-i18n="footer.blog">Blog</a></li>
                         </ul>
                     </div>
                     
                     <div>
-                        <h4 class="font-bold mb-4">Contato</h4>
+                        <h4 class="font-bold mb-4" data-i18n="nav.contact">Contato</h4>
                         <ul class="space-y-2 text-gray-400">
                             <li><i class="fas fa-envelope mr-2"></i> contato@gocasa360it.com</li>
                             <li><i class="fas fa-phone mr-2"></i> (11) 3000-0000</li>
@@ -1067,9 +1067,9 @@ pages.get('/login', (c) => {
                     <a href="/" class="flex items-center justify-center mb-8">
                         <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-16 w-auto">
                     </a>
-                    <h2 class="text-3xl font-bold text-gray-900">Entrar na sua conta</h2>
+                    <h2 class="text-3xl font-bold text-gray-900" data-i18n="auth.login.title">Entrar na sua conta</h2>
                     <p class="mt-2 text-sm text-gray-600">
-                        Ou <a href="/cadastro" class="font-medium text-primary hover:text-secondary">crie uma conta nova</a>
+                        <span data-i18n="auth.login.noAccount">Não tem uma conta?</span> <a href="/cadastro" class="font-medium text-primary hover:text-secondary" data-i18n="auth.login.register">Cadastre-se</a>
                     </p>
                 </div>
                 
@@ -1078,13 +1078,13 @@ pages.get('/login', (c) => {
                 <form id="loginForm" class="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg">
                     <div class="space-y-4">
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.login.email">Email</label>
                             <input id="email" name="email" type="email" required 
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="seu@email.com">
                         </div>
                         <div>
-                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.login.password">Senha</label>
                             <input id="senha" name="senha" type="password" required 
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="••••••••">
@@ -1104,7 +1104,7 @@ pages.get('/login', (c) => {
                     <button type="submit" id="submitBtn"
                             class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition">
                         <i class="fas fa-sign-in-alt mr-2"></i>
-                        Entrar
+                        <span data-i18n="auth.login.button">Entrar</span>
                     </button>
                 </form>
                 
@@ -1278,9 +1278,9 @@ pages.get('/cadastro', (c) => {
                     <a href="/" class="flex items-center justify-center mb-8">
                         <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-16 w-auto">
                     </a>
-                    <h2 class="text-3xl font-bold text-gray-900">Criar conta</h2>
+                    <h2 class="text-3xl font-bold text-gray-900" data-i18n="auth.register.title">Criar conta</h2>
                     <p class="mt-2 text-sm text-gray-600">
-                        Já tem uma conta? <a href="/login" class="font-medium text-primary hover:text-secondary">Faça login</a>
+                        <span data-i18n="auth.register.hasAccount">Já tem uma conta?</span> <a href="/login" class="font-medium text-primary hover:text-secondary" data-i18n="auth.register.login">Faça login</a>
                     </p>
                 </div>
                 
@@ -1289,41 +1289,41 @@ pages.get('/cadastro', (c) => {
                 <form id="cadastroForm" class="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg">
                     <div class="space-y-4">
                         <div>
-                            <label for="nome_completo" class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                            <label for="nome_completo" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.register.name">Nome Completo</label>
                             <input id="nome_completo" name="nome_completo" type="text" required 
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="João Silva">
                         </div>
                         
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.login.email">Email</label>
                             <input id="email" name="email" type="email" required 
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="seu@email.com">
                         </div>
                         
                         <div>
-                            <label for="telefone" class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                            <label for="telefone" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.register.phone">Telefone</label>
                             <input id="telefone" name="telefone" type="tel" 
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="(11) 98765-4321">
                         </div>
                         
                         <div>
-                            <label for="cpf_cnpj" class="block text-sm font-medium text-gray-700 mb-2">CPF/CNPJ</label>
+                            <label for="cpf_cnpj" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.register.document">CPF/CNPJ</label>
                             <input id="cpf_cnpj" name="cpf_cnpj" type="text" 
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="000.000.000-00">
                         </div>
                         
                         <div>
-                            <label for="tipo" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Usuário</label>
+                            <label for="tipo" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.register.userType">Tipo de Usuário</label>
                             <select id="tipo" name="tipo" required 
                                     class="appearance-none relative block w-full px-4 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
                                 <option value="">Selecione...</option>
-                                <option value="inquilino">Inquilino / Comprador</option>
-                                <option value="proprietario">Proprietário</option>
-                                <option value="corretor">Corretor de Imóveis</option>
+                                <option value="inquilino" data-i18n="auth.register.tenant">Inquilino / Comprador</option>
+                                <option value="proprietario" data-i18n="auth.register.owner">Proprietário</option>
+                                <option value="corretor" data-i18n="auth.register.agent">Corretor de Imóveis</option>
                             </select>
                             <p class="mt-2 text-xs text-gray-500">
                                 <span id="tipo-help"></span>
@@ -1331,7 +1331,7 @@ pages.get('/cadastro', (c) => {
                         </div>
                         
                         <div>
-                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.login.password">Senha</label>
                             <input id="senha" name="senha" type="password" required 
                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="••••••••">
@@ -1357,7 +1357,7 @@ pages.get('/cadastro', (c) => {
                     <button type="submit" id="submitBtn"
                             class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition">
                         <i class="fas fa-user-plus mr-2"></i>
-                        Criar Conta
+                        <span data-i18n="auth.register.button">Criar Conta</span>
                     </button>
                 </form>
                 
