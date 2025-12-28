@@ -2289,6 +2289,8 @@ pages.get('/imoveis/:id', (c) => {
 })
 
 // Página de Cadastro de Imóvel (Proprietários)
+
+// Página de Cadastro de Imóvel (Wizard 5 Etapas) - Story 1 DoR
 pages.get('/cadastrar-imovel', (c) => {
   return c.html(`
     <!DOCTYPE html>
@@ -2296,7 +2298,7 @@ pages.get('/cadastrar-imovel', (c) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Cadastrar Imóvel - GOCASA360IT</title>
+        <title>Anunciar Imóvel - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
@@ -2305,8 +2307,13 @@ pages.get('/cadastrar-imovel', (c) => {
             theme: {
               extend: {
                 colors: {
-                  primary: '#2563eb',
-                  secondary: '#0ea5e9'
+                  primary: '#1976D2',
+                  secondary: '#0ea5e9',
+                  accent: '#f59e0b',
+                  success: '#28A745',
+                  danger: '#DC3545',
+                  dark: '#1e293b',
+                  light: '#f1f5f9'
                 }
               }
             }
@@ -2315,8 +2322,24 @@ pages.get('/cadastrar-imovel', (c) => {
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
           body { font-family: 'Inter', sans-serif; }
+          
+          .step-indicator {
+            transition: all 0.3s ease;
+          }
+          
+          .step-indicator.active {
+            transform: scale(1.1);
+          }
+          
+          .step-indicator.completed {
+            animation: pulse 0.5s ease-in-out;
+          }
+          
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
         </style>
-        <script src="/i18n.js"></script>
     </head>
     <body class="bg-gray-50">
         <!-- Navigation -->
@@ -2335,449 +2358,57 @@ pages.get('/cadastrar-imovel', (c) => {
                         </div>
                     </a>
                     <div class="flex items-center space-x-4">
-                        <a href="/" class="text-gray-700 hover:text-primary transition">
-                            <i class="fas fa-arrow-left mr-2"></i> Voltar
+                        <a href="/dashboard" class="text-gray-700 hover:text-primary transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Voltar ao Dashboard
                         </a>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
+                    <i class="fas fa-plus-circle text-primary mr-3"></i>
+                    Anunciar Imóvel
+                </h1>
+                <p class="text-lg text-gray-600">
+                    Siga as 5 etapas para criar um anúncio completo e atrativo
+                </p>
+            </div>
+            
+            <!-- Wizard Container -->
             <div class="bg-white rounded-xl shadow-lg p-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Anunciar Imóvel</h1>
-                <p class="text-gray-600 mb-8">Preencha os dados do seu imóvel para começar a anunciar</p>
-                
                 <div id="alert" class="hidden mb-6"></div>
                 
-                <form id="formImovel" class="space-y-8">
-                    <!-- Informações Básicas -->
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Informações Básicas</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Título do Anúncio *</label>
-                                <input type="text" id="titulo" required maxlength="100"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                                       placeholder="Ex: Apartamento moderno com 2 quartos">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Imóvel *</label>
-                                <select id="tipo" required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                                    <option value="">Selecione...</option>
-                                    <option value="apartamento">Apartamento</option>
-                                    <option value="casa">Casa</option>
-                                    <option value="kitnet">Kitnet</option>
-                                    <option value="cobertura">Cobertura</option>
-                                    <option value="terreno">Terreno</option>
-                                    <option value="comercial">Comercial</option>
-                                    <option value="rural">Rural</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Finalidade *</label>
-                                <select id="finalidade" required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                                    <option value="">Selecione...</option>
-                                    <option value="aluguel">Aluguel</option>
-                                    <option value="venda">Venda</option>
-                                    <option value="ambos">Aluguel e Venda</option>
-                                </select>
-                            </div>
-                            
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
-                                <textarea id="descricao" rows="4"
-                                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                                          placeholder="Descreva as características e diferenciais do imóvel..."></textarea>
-                            </div>
-                        </div>
+                <div id="wizardContainer">
+                    <!-- O wizard será renderizado aqui pelo JavaScript -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-spinner fa-spin text-5xl text-primary mb-4"></i>
+                        <p class="text-gray-600">Carregando formulário...</p>
                     </div>
-
-                    <!-- Valores -->
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Valores</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Valor Aluguel (R$)</label>
-                                <input type="number" id="preco_aluguel" step="0.01"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Valor Venda (R$)</label>
-                                <input type="number" id="preco_venda" step="0.01"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Condomínio (R$)</label>
-                                <input type="number" id="condominio" step="0.01"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">IPTU (R$/mês)</label>
-                                <input type="number" id="iptu" step="0.01"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Endereço -->
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Endereço</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">CEP *</label>
-                                <input type="text" id="endereco_cep" required maxlength="9"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                                       placeholder="00000-000">
-                            </div>
-                            
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Rua/Avenida *</label>
-                                <input type="text" id="endereco_rua" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Número *</label>
-                                <input type="text" id="endereco_numero" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Complemento</label>
-                                <input type="text" id="endereco_complemento"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                                       placeholder="Apto, Bloco, etc">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Bairro *</label>
-                                <input type="text" id="endereco_bairro" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Cidade *</label>
-                                <input type="text" id="endereco_cidade" required
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Estado *</label>
-                                <select id="endereco_estado" required
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                                    <option value="">Selecione...</option>
-                                    <option value="SP">São Paulo</option>
-                                    <option value="RJ">Rio de Janeiro</option>
-                                    <option value="MG">Minas Gerais</option>
-                                    <option value="ES">Espírito Santo</option>
-                                    <option value="BA">Bahia</option>
-                                    <option value="PR">Paraná</option>
-                                    <option value="SC">Santa Catarina</option>
-                                    <option value="RS">Rio Grande do Sul</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Características -->
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Características</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.bedrooms">Quartos</label>
-                                <input type="number" id="quartos" min="0"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Banheiros</label>
-                                <input type="number" id="banheiros" min="0"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Vagas</label>
-                                <input type="number" id="vagas_garagem" min="0"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Área Útil (m²)</label>
-                                <input type="number" id="area_util" step="0.01"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Área Total (m²)</label>
-                                <input type="number" id="area_total" step="0.01"
-                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Comodidades e Opções -->
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Comodidades e Opções</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" id="mobiliado" class="w-5 h-5 text-primary">
-                                <span class="text-sm">Mobiliado</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" id="pet_friendly" class="w-5 h-5 text-primary">
-                                <span class="text-sm">Pet Friendly</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" value="piscina" class="comodidade w-5 h-5 text-primary">
-                                <span class="text-sm">Piscina</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" value="academia" class="comodidade w-5 h-5 text-primary">
-                                <span class="text-sm">Academia</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" value="churrasqueira" class="comodidade w-5 h-5 text-primary">
-                                <span class="text-sm">Churrasqueira</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" value="salao_festas" class="comodidade w-5 h-5 text-primary">
-                                <span class="text-sm">Salão de Festas</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" value="playground" class="comodidade w-5 h-5 text-primary">
-                                <span class="text-sm">Playground</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" value="elevador" class="comodidade w-5 h-5 text-primary">
-                                <span class="text-sm">Elevador</span>
-                            </label>
-                            
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" value="portaria_24h" class="comodidade w-5 h-5 text-primary">
-                                <span class="text-sm">Portaria 24h</span>
-                            </label>
-                        </div>
-                        
-                        <!-- Destaque -->
-                        <div class="bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
-                            <label class="flex items-start space-x-3 cursor-pointer">
-                                <input type="checkbox" id="destaque" class="w-6 h-6 text-accent mt-1">
-                                <div>
-                                    <span class="text-lg font-bold text-amber-900 flex items-center">
-                                        <i class="fas fa-star text-accent mr-2"></i>
-                                        Destacar meu Imóvel na Página Principal
-                                    </span>
-                                    <p class="text-sm text-amber-700 mt-1">
-                                        Seu imóvel aparecerá na seção de destaques da home, recebendo muito mais visualizações!
-                                    </p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Foto -->
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Foto de Capa</h2>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">URL da Foto Principal</label>
-                            <input type="url" id="foto_capa"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-                                   placeholder="https://...">
-                            <p class="text-xs text-gray-500 mt-1">Cole a URL de uma foto do imóvel (upload de fotos será adicionado em breve)</p>
-                        </div>
-                    </div>
-
-                    <!-- Botões -->
-                    <div class="flex space-x-4 pt-6 border-t">
-                        <button type="button" onclick="window.location.href='/'"
-                                class="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-semibold">
-                            Cancelar
-                        </button>
-                        <button type="submit" id="submitBtn"
-                                class="flex-1 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition font-semibold">
-                            <i class="fas fa-check mr-2"></i> Publicar Imóvel
-                        </button>
-                    </div>
-                </form>
+                </div>
+            </div>
+            
+            <!-- Info Card -->
+            <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-blue-900 mb-3">
+                    <i class="fas fa-lightbulb mr-2"></i>
+                    Dicas para um anúncio de sucesso
+                </h3>
+                <ul class="space-y-2 text-sm text-blue-800">
+                    <li><i class="fas fa-check mr-2 text-success"></i> Use fotos de alta qualidade e bem iluminadas</li>
+                    <li><i class="fas fa-check mr-2 text-success"></i> Escreva um título claro e chamativo</li>
+                    <li><i class="fas fa-check mr-2 text-success"></i> Detalhe todas as comodidades do imóvel</li>
+                    <li><i class="fas fa-check mr-2 text-success"></i> Seja honesto sobre o estado de conservação</li>
+                    <li><i class="fas fa-check mr-2 text-success"></i> Responda rapidamente às mensagens dos interessados</li>
+                </ul>
             </div>
         </div>
-
-        <script>
-          const token = localStorage.getItem('token');
-          const usuario = localStorage.getItem('usuario') ? JSON.parse(localStorage.getItem('usuario')) : null;
-          
-          // Verificar autenticação e tipo
-          if (!token || !usuario) {
-            alert('Você precisa estar logado para cadastrar imóveis');
-            window.location.href = '/login';
-          } else if (usuario.tipo !== 'proprietario' && usuario.tipo !== 'corretor') {
-            alert('Apenas proprietários e corretores podem cadastrar imóveis');
-            window.location.href = '/';
-          }
-
-          document.getElementById('formImovel').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Coletar dados do formulário
-            const formData = {
-              titulo: document.getElementById('titulo').value,
-              descricao: document.getElementById('descricao').value,
-              tipo: document.getElementById('tipo').value,
-              finalidade: document.getElementById('finalidade').value,
-              preco_aluguel: parseFloat(document.getElementById('preco_aluguel').value) || null,
-              preco_venda: parseFloat(document.getElementById('preco_venda').value) || null,
-              condominio: parseFloat(document.getElementById('condominio').value) || 0,
-              iptu: parseFloat(document.getElementById('iptu').value) || 0,
-              endereco_rua: document.getElementById('endereco_rua').value,
-              endereco_numero: document.getElementById('endereco_numero').value,
-              endereco_complemento: document.getElementById('endereco_complemento').value,
-              endereco_bairro: document.getElementById('endereco_bairro').value,
-              endereco_cidade: document.getElementById('endereco_cidade').value,
-              endereco_estado: document.getElementById('endereco_estado').value,
-              endereco_cep: document.getElementById('endereco_cep').value,
-              quartos: parseInt(document.getElementById('quartos').value) || 0,
-              banheiros: parseInt(document.getElementById('banheiros').value) || 0,
-              vagas_garagem: parseInt(document.getElementById('vagas_garagem').value) || 0,
-              area_util: parseFloat(document.getElementById('area_util').value) || 0,
-              area_total: parseFloat(document.getElementById('area_total').value) || 0,
-              mobiliado: document.getElementById('mobiliado').checked,
-              pet_friendly: document.getElementById('pet_friendly').checked,
-              foto_capa: document.getElementById('foto_capa').value,
-              destaque: document.getElementById('destaque').checked  // Incluir flag de destaque
-            };
-            
-            // Coletar comodidades selecionadas
-            const comodidades = Array.from(document.querySelectorAll('.comodidade:checked')).map(cb => cb.value);
-            formData.comodidades = comodidades;
-            
-            // Validações
-            if (formData.finalidade === 'aluguel' && !formData.preco_aluguel) {
-              showAlert('Para aluguel, o valor do aluguel é obrigatório', 'error');
-              return;
-            }
-            if (formData.finalidade === 'venda' && !formData.preco_venda) {
-              showAlert('Para venda, o valor de venda é obrigatório', 'error');
-              return;
-            }
-            if (formData.finalidade === 'ambos' && (!formData.preco_aluguel || !formData.preco_venda)) {
-              showAlert('Para aluguel e venda, ambos os valores são obrigatórios', 'error');
-              return;
-            }
-            
-            // Desabilitar botão
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Publicando...';
-            
-            try {
-              const response = await fetch('/api/imoveis', {
-                method: 'POST',
-                headers: {
-                  'Authorization': \`Bearer \${token}\`,
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-              });
-              
-              const data = await response.json();
-              
-              if (data.success) {
-                showAlert('Imóvel publicado com sucesso!', 'success');
-                setTimeout(() => {
-                  window.location.href = \`/imoveis/\${data.data.imovel_id}\`;
-                }, 1500);
-              } else {
-                showAlert(data.error || 'Erro ao publicar imóvel', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Publicar Imóvel';
-              }
-            } catch (error) {
-              console.error('Erro:', error);
-              showAlert('Erro ao publicar imóvel', 'error');
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Publicar Imóvel';
-            }
-          });
-          
-          function showAlert(message, type) {
-            const alertDiv = document.getElementById('alert');
-            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200';
-            alertDiv.className = \`border rounded-lg p-4 \${bgColor}\`;
-            alertDiv.innerHTML = message;
-            alertDiv.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        </script>
-
-        <script>
-            // Initialize i18n when page loads
-            document.addEventListener('DOMContentLoaded', () => {
-                // Initialize I18N
-                if (window.I18N) {
-                    window.I18N.init();
-                    updateLanguageButton();
-                }
-                
-                // Language selector dropdown toggle
-                const languageBtn = document.getElementById('currentLanguageBtn');
-                const languageDropdown = document.getElementById('languageDropdown');
-                
-                if (languageBtn && languageDropdown) {
-                    languageBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        languageDropdown.classList.toggle('hidden');
-                    });
-                    
-                    // Close dropdown when clicking outside
-                    document.addEventListener('click', () => {
-                        languageDropdown.classList.add('hidden');
-                    });
-                }
-            });
-            
-            function changeLanguage(locale) {
-                if (window.I18N) {
-                    window.I18N.changeLanguage(locale);
-                    updateLanguageButton();
-                    
-                    // Close dropdown
-                    const dropdown = document.getElementById('languageDropdown');
-                    if (dropdown) dropdown.classList.add('hidden');
-                    
-                    // Reload to apply translations
-                    setTimeout(() => window.location.reload(), 100);
-                }
-            }
-            
-            function updateLanguageButton() {
-                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
-                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
-                
-                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
-                const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLangCode');
-                const htmlTag = document.getElementById('htmlTag');
-                
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
-                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
-                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
-            }
-        </script>
+        
+        <!-- Wizard JavaScript -->
+        <script src="/static/wizard-imovel.js"></script>
     </body>
     </html>
   `)

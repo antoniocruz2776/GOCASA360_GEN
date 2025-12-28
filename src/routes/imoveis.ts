@@ -366,4 +366,260 @@ imoveis.get('/destaque/list', async (c) => {
   }
 })
 
+
+// PUT /api/imoveis/:id - Atualizar imóvel (proprietários)
+imoveis.put('/:id', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({
+        success: false,
+        error: 'É necessário estar logado'
+      }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    const usuario = await getUserFromToken(token, DB)
+    
+    if (!usuario) {
+      return c.json({
+        success: false,
+        error: 'Sessão inválida ou expirada'
+      }, 401)
+    }
+    
+    const imovelId = c.req.param('id')
+    
+    // Verificar se o imóvel existe e pertence ao usuário
+    const imovel = await DB.prepare(`
+      SELECT * FROM imoveis WHERE id = ?
+    `).bind(imovelId).first()
+    
+    if (!imovel) {
+      return c.json({
+        success: false,
+        error: 'Imóvel não encontrado'
+      }, 404)
+    }
+    
+    if (imovel.proprietario_id !== usuario.id && usuario.tipo !== 'admin') {
+      return c.json({
+        success: false,
+        error: 'Você não tem permissão para editar este imóvel'
+      }, 403)
+    }
+    
+    const body = await c.req.json()
+    const {
+      titulo, descricao, tipo, finalidade,
+      preco_aluguel, preco_venda, condominio, iptu,
+      endereco_rua, endereco_numero, endereco_complemento,
+      endereco_bairro, endereco_cidade, endereco_estado, endereco_cep,
+      endereco_latitude, endereco_longitude,
+      quartos, banheiros, vagas_garagem, area_util, area_total,
+      mobiliado, pet_friendly, comodidades, fotos, foto_capa,
+      classe_energetica, disponivel, destaque
+    } = body
+    
+    // Atualizar apenas campos fornecidos
+    const updates = []
+    const params = []
+    
+    if (titulo !== undefined) { updates.push('titulo = ?'); params.push(titulo) }
+    if (descricao !== undefined) { updates.push('descricao = ?'); params.push(descricao) }
+    if (tipo !== undefined) { updates.push('tipo = ?'); params.push(tipo) }
+    if (finalidade !== undefined) { updates.push('finalidade = ?'); params.push(finalidade) }
+    if (preco_aluguel !== undefined) { updates.push('preco_aluguel = ?'); params.push(preco_aluguel) }
+    if (preco_venda !== undefined) { updates.push('preco_venda = ?'); params.push(preco_venda) }
+    if (condominio !== undefined) { updates.push('condominio = ?'); params.push(condominio) }
+    if (iptu !== undefined) { updates.push('iptu = ?'); params.push(iptu) }
+    if (endereco_rua !== undefined) { updates.push('endereco_rua = ?'); params.push(endereco_rua) }
+    if (endereco_numero !== undefined) { updates.push('endereco_numero = ?'); params.push(endereco_numero) }
+    if (endereco_complemento !== undefined) { updates.push('endereco_complemento = ?'); params.push(endereco_complemento) }
+    if (endereco_bairro !== undefined) { updates.push('endereco_bairro = ?'); params.push(endereco_bairro) }
+    if (endereco_cidade !== undefined) { updates.push('endereco_cidade = ?'); params.push(endereco_cidade) }
+    if (endereco_estado !== undefined) { updates.push('endereco_estado = ?'); params.push(endereco_estado) }
+    if (endereco_cep !== undefined) { updates.push('endereco_cep = ?'); params.push(endereco_cep) }
+    if (endereco_latitude !== undefined) { updates.push('endereco_latitude = ?'); params.push(endereco_latitude) }
+    if (endereco_longitude !== undefined) { updates.push('endereco_longitude = ?'); params.push(endereco_longitude) }
+    if (quartos !== undefined) { updates.push('quartos = ?'); params.push(quartos) }
+    if (banheiros !== undefined) { updates.push('banheiros = ?'); params.push(banheiros) }
+    if (vagas_garagem !== undefined) { updates.push('vagas_garagem = ?'); params.push(vagas_garagem) }
+    if (area_util !== undefined) { updates.push('area_util = ?'); params.push(area_util) }
+    if (area_total !== undefined) { updates.push('area_total = ?'); params.push(area_total) }
+    if (mobiliado !== undefined) { updates.push('mobiliado = ?'); params.push(mobiliado ? 1 : 0) }
+    if (pet_friendly !== undefined) { updates.push('pet_friendly = ?'); params.push(pet_friendly ? 1 : 0) }
+    if (comodidades !== undefined) { updates.push('comodidades = ?'); params.push(comodidades) }
+    if (fotos !== undefined) { updates.push('fotos = ?'); params.push(fotos) }
+    if (foto_capa !== undefined) { updates.push('foto_capa = ?'); params.push(foto_capa) }
+    if (classe_energetica !== undefined) { updates.push('classe_energetica = ?'); params.push(classe_energetica) }
+    if (disponivel !== undefined) { updates.push('disponivel = ?'); params.push(disponivel ? 1 : 0) }
+    if (destaque !== undefined) { updates.push('destaque = ?'); params.push(destaque ? 1 : 0) }
+    
+    updates.push('updated_at = datetime("now")')
+    params.push(imovelId)
+    
+    const query = `
+      UPDATE imoveis 
+      SET ${updates.join(', ')}
+      WHERE id = ?
+    `
+    
+    await DB.prepare(query).bind(...params).run()
+    
+    // Buscar imóvel atualizado
+    const imovelAtualizado = await DB.prepare(`
+      SELECT * FROM imoveis WHERE id = ?
+    `).bind(imovelId).first()
+    
+    return c.json({
+      success: true,
+      message: 'Imóvel atualizado com sucesso',
+      data: {
+        ...imovelAtualizado,
+        comodidades: imovelAtualizado.comodidades ? JSON.parse(imovelAtualizado.comodidades) : [],
+        fotos: imovelAtualizado.fotos ? JSON.parse(imovelAtualizado.fotos) : []
+      }
+    })
+    
+  } catch (error) {
+    console.error('Erro ao atualizar imóvel:', error)
+    return c.json({
+      success: false,
+      error: 'Erro ao atualizar imóvel'
+    }, 500)
+  }
+})
+
+// DELETE /api/imoveis/:id - Deletar imóvel (proprietários)
+imoveis.delete('/:id', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({
+        success: false,
+        error: 'É necessário estar logado'
+      }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    const usuario = await getUserFromToken(token, DB)
+    
+    if (!usuario) {
+      return c.json({
+        success: false,
+        error: 'Sessão inválida ou expirada'
+      }, 401)
+    }
+    
+    const imovelId = c.req.param('id')
+    
+    // Verificar se o imóvel existe e pertence ao usuário
+    const imovel = await DB.prepare(`
+      SELECT * FROM imoveis WHERE id = ?
+    `).bind(imovelId).first()
+    
+    if (!imovel) {
+      return c.json({
+        success: false,
+        error: 'Imóvel não encontrado'
+      }, 404)
+    }
+    
+    if (imovel.proprietario_id !== usuario.id && usuario.tipo !== 'admin') {
+      return c.json({
+        success: false,
+        error: 'Você não tem permissão para excluir este imóvel'
+      }, 403)
+    }
+    
+    // Deletar imóvel (cascade delete irá remover favoritos, visitas, mensagens, propostas)
+    await DB.prepare(`
+      DELETE FROM imoveis WHERE id = ?
+    `).bind(imovelId).run()
+    
+    return c.json({
+      success: true,
+      message: 'Imóvel excluído com sucesso'
+    })
+    
+  } catch (error) {
+    console.error('Erro ao deletar imóvel:', error)
+    return c.json({
+      success: false,
+      error: 'Erro ao deletar imóvel'
+    }, 500)
+  }
+})
+
+// PATCH /api/imoveis/:id/status - Alterar status (disponível/pausado)
+imoveis.patch('/:id/status', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({
+        success: false,
+        error: 'É necessário estar logado'
+      }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    const usuario = await getUserFromToken(token, DB)
+    
+    if (!usuario) {
+      return c.json({
+        success: false,
+        error: 'Sessão inválida ou expirada'
+      }, 401)
+    }
+    
+    const imovelId = c.req.param('id')
+    const { disponivel } = await c.req.json()
+    
+    // Verificar se o imóvel existe e pertence ao usuário
+    const imovel = await DB.prepare(`
+      SELECT * FROM imoveis WHERE id = ?
+    `).bind(imovelId).first()
+    
+    if (!imovel) {
+      return c.json({
+        success: false,
+        error: 'Imóvel não encontrado'
+      }, 404)
+    }
+    
+    if (imovel.proprietario_id !== usuario.id && usuario.tipo !== 'admin') {
+      return c.json({
+        success: false,
+        error: 'Você não tem permissão para alterar este imóvel'
+      }, 403)
+    }
+    
+    await DB.prepare(`
+      UPDATE imoveis 
+      SET disponivel = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `).bind(disponivel ? 1 : 0, imovelId).run()
+    
+    return c.json({
+      success: true,
+      message: disponivel ? 'Imóvel ativado com sucesso' : 'Imóvel pausado com sucesso',
+      data: { disponivel }
+    })
+    
+  } catch (error) {
+    console.error('Erro ao alterar status do imóvel:', error)
+    return c.json({
+      success: false,
+      error: 'Erro ao alterar status do imóvel'
+    }, 500)
+  }
+})
+
 export default imoveis
