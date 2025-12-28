@@ -71,8 +71,33 @@ pages.get('/imoveis', (c) => {
                         <a href="#sobre" class="text-gray-700 hover:text-primary transition">Sobre</a>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <a href="/login" class="text-primary hover:text-secondary transition font-semibold">Entrar</a>
-                        <a href="/cadastro" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold shadow-sm">Cadastrar</a>
+                        <a href="/login" class="text-primary hover:text-secondary transition font-semibold" data-i18n="nav.login">Entrar</a>
+                        <a href="/cadastro" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold shadow-sm" data-i18n="nav.register">Cadastrar</a>
+                        
+                        <!-- Language Selector -->
+                        <div class="relative" id="languageSelector">
+                            <button id="currentLanguageBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                                <span id="currentFlag" class="text-2xl">🇮🇹</span>
+                                <span id="currentLangCode" class="text-sm font-medium text-gray-700 uppercase">IT</span>
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="languageDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <button onclick="changeLanguage('it-IT')" class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition border-b border-gray-100">
+                                    <span class="text-2xl">🇮🇹</span>
+                                    <span class="text-sm font-medium text-gray-700">Italiano</span>
+                                </button>
+                                <button onclick="changeLanguage('pt-BR')" class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition border-b border-gray-100">
+                                    <span class="text-2xl">🇧🇷</span>
+                                    <span class="text-sm font-medium text-gray-700">Português</span>
+                                </button>
+                                <button onclick="changeLanguage('en-US')" class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition">
+                                    <span class="text-2xl">🇺🇸</span>
+                                    <span class="text-sm font-medium text-gray-700">English</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -416,50 +441,57 @@ pages.get('/imoveis', (c) => {
         </script>
 
         <script>
-            // Initialize i18n
-            let i18nInstance;
+            // Initialize i18n when page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize I18N
+                if (window.I18N) {
+                    window.I18N.init();
+                    updateLanguageButton();
+                }
+                
+                // Language selector dropdown toggle
+                const languageBtn = document.getElementById('currentLanguageBtn');
+                const languageDropdown = document.getElementById('languageDropdown');
+                
+                if (languageBtn && languageDropdown) {
+                    languageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageDropdown.classList.toggle('hidden');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', () => {
+                        languageDropdown.classList.add('hidden');
+                    });
+                }
+            });
             
-            async function initI18n() {
-                i18nInstance = await i18n.init();
-                updateLanguageButton();
-            }
-            
-            async function changeLanguage(locale) {
-                await i18nInstance.changeLocale(locale);
-                window.location.reload();
+            function changeLanguage(locale) {
+                if (window.I18N) {
+                    window.I18N.changeLanguage(locale);
+                    updateLanguageButton();
+                    
+                    // Close dropdown
+                    const dropdown = document.getElementById('languageDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    
+                    // Reload to apply translations
+                    setTimeout(() => window.location.reload(), 100);
+                }
             }
             
             function updateLanguageButton() {
                 const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
                 const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
                 
-                const currentLang = i18nInstance.currentLocale;
+                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
                 const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLang');
+                const langEl = document.getElementById('currentLangCode');
                 const htmlTag = document.getElementById('htmlTag');
                 
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
-                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
-                if (htmlTag) htmlTag.lang = currentLang;
-            }
-            
-            // Toggle dropdown
-            document.addEventListener('click', (e) => {
-                const btn = document.getElementById('langBtn');
-                const dropdown = document.getElementById('langDropdown');
-                
-                if (btn && btn.contains(e.target)) {
-                    dropdown.classList.toggle('hidden');
-                } else if (dropdown && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            
-            // Initialize on load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initI18n);
-            } else {
-                initI18n();
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
+                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
+                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
             }
         </script>
     </body>
@@ -545,8 +577,33 @@ pages.get('/', (c) => {
                         <a href="#contato" class="text-gray-700 hover:text-primary transition">Contato</a>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <a href="/login" class="text-primary hover:text-secondary transition font-semibold">Entrar</a>
-                        <a href="/cadastro" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold shadow-sm">Cadastrar</a>
+                        <a href="/login" class="text-primary hover:text-secondary transition font-semibold" data-i18n="nav.login">Entrar</a>
+                        <a href="/cadastro" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition font-semibold shadow-sm" data-i18n="nav.register">Cadastrar</a>
+                        
+                        <!-- Language Selector -->
+                        <div class="relative" id="languageSelector">
+                            <button id="currentLanguageBtn" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                                <span id="currentFlag" class="text-2xl">🇮🇹</span>
+                                <span id="currentLangCode" class="text-sm font-medium text-gray-700 uppercase">IT</span>
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="languageDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <button onclick="changeLanguage('it-IT')" class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition border-b border-gray-100">
+                                    <span class="text-2xl">🇮🇹</span>
+                                    <span class="text-sm font-medium text-gray-700">Italiano</span>
+                                </button>
+                                <button onclick="changeLanguage('pt-BR')" class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition border-b border-gray-100">
+                                    <span class="text-2xl">🇧🇷</span>
+                                    <span class="text-sm font-medium text-gray-700">Português</span>
+                                </button>
+                                <button onclick="changeLanguage('en-US')" class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition">
+                                    <span class="text-2xl">🇺🇸</span>
+                                    <span class="text-sm font-medium text-gray-700">English</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -915,50 +972,57 @@ pages.get('/', (c) => {
         </script>
 
         <script>
-            // Initialize i18n
-            let i18nInstance;
+            // Initialize i18n when page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize I18N
+                if (window.I18N) {
+                    window.I18N.init();
+                    updateLanguageButton();
+                }
+                
+                // Language selector dropdown toggle
+                const languageBtn = document.getElementById('currentLanguageBtn');
+                const languageDropdown = document.getElementById('languageDropdown');
+                
+                if (languageBtn && languageDropdown) {
+                    languageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageDropdown.classList.toggle('hidden');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', () => {
+                        languageDropdown.classList.add('hidden');
+                    });
+                }
+            });
             
-            async function initI18n() {
-                i18nInstance = await i18n.init();
-                updateLanguageButton();
-            }
-            
-            async function changeLanguage(locale) {
-                await i18nInstance.changeLocale(locale);
-                window.location.reload();
+            function changeLanguage(locale) {
+                if (window.I18N) {
+                    window.I18N.changeLanguage(locale);
+                    updateLanguageButton();
+                    
+                    // Close dropdown
+                    const dropdown = document.getElementById('languageDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    
+                    // Reload to apply translations
+                    setTimeout(() => window.location.reload(), 100);
+                }
             }
             
             function updateLanguageButton() {
                 const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
                 const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
                 
-                const currentLang = i18nInstance.currentLocale;
+                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
                 const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLang');
+                const langEl = document.getElementById('currentLangCode');
                 const htmlTag = document.getElementById('htmlTag');
                 
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
-                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
-                if (htmlTag) htmlTag.lang = currentLang;
-            }
-            
-            // Toggle dropdown
-            document.addEventListener('click', (e) => {
-                const btn = document.getElementById('langBtn');
-                const dropdown = document.getElementById('langDropdown');
-                
-                if (btn && btn.contains(e.target)) {
-                    dropdown.classList.toggle('hidden');
-                } else if (dropdown && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            
-            // Initialize on load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initI18n);
-            } else {
-                initI18n();
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
+                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
+                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
             }
         </script>
     </body>
@@ -1119,50 +1183,57 @@ pages.get('/login', (c) => {
         </script>
 
         <script>
-            // Initialize i18n
-            let i18nInstance;
+            // Initialize i18n when page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize I18N
+                if (window.I18N) {
+                    window.I18N.init();
+                    updateLanguageButton();
+                }
+                
+                // Language selector dropdown toggle
+                const languageBtn = document.getElementById('currentLanguageBtn');
+                const languageDropdown = document.getElementById('languageDropdown');
+                
+                if (languageBtn && languageDropdown) {
+                    languageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageDropdown.classList.toggle('hidden');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', () => {
+                        languageDropdown.classList.add('hidden');
+                    });
+                }
+            });
             
-            async function initI18n() {
-                i18nInstance = await i18n.init();
-                updateLanguageButton();
-            }
-            
-            async function changeLanguage(locale) {
-                await i18nInstance.changeLocale(locale);
-                window.location.reload();
+            function changeLanguage(locale) {
+                if (window.I18N) {
+                    window.I18N.changeLanguage(locale);
+                    updateLanguageButton();
+                    
+                    // Close dropdown
+                    const dropdown = document.getElementById('languageDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    
+                    // Reload to apply translations
+                    setTimeout(() => window.location.reload(), 100);
+                }
             }
             
             function updateLanguageButton() {
                 const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
                 const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
                 
-                const currentLang = i18nInstance.currentLocale;
+                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
                 const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLang');
+                const langEl = document.getElementById('currentLangCode');
                 const htmlTag = document.getElementById('htmlTag');
                 
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
-                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
-                if (htmlTag) htmlTag.lang = currentLang;
-            }
-            
-            // Toggle dropdown
-            document.addEventListener('click', (e) => {
-                const btn = document.getElementById('langBtn');
-                const dropdown = document.getElementById('langDropdown');
-                
-                if (btn && btn.contains(e.target)) {
-                    dropdown.classList.toggle('hidden');
-                } else if (dropdown && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            
-            // Initialize on load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initI18n);
-            } else {
-                initI18n();
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
+                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
+                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
             }
         </script>
     </body>
@@ -1401,50 +1472,57 @@ pages.get('/cadastro', (c) => {
         </script>
 
         <script>
-            // Initialize i18n
-            let i18nInstance;
+            // Initialize i18n when page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize I18N
+                if (window.I18N) {
+                    window.I18N.init();
+                    updateLanguageButton();
+                }
+                
+                // Language selector dropdown toggle
+                const languageBtn = document.getElementById('currentLanguageBtn');
+                const languageDropdown = document.getElementById('languageDropdown');
+                
+                if (languageBtn && languageDropdown) {
+                    languageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageDropdown.classList.toggle('hidden');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', () => {
+                        languageDropdown.classList.add('hidden');
+                    });
+                }
+            });
             
-            async function initI18n() {
-                i18nInstance = await i18n.init();
-                updateLanguageButton();
-            }
-            
-            async function changeLanguage(locale) {
-                await i18nInstance.changeLocale(locale);
-                window.location.reload();
+            function changeLanguage(locale) {
+                if (window.I18N) {
+                    window.I18N.changeLanguage(locale);
+                    updateLanguageButton();
+                    
+                    // Close dropdown
+                    const dropdown = document.getElementById('languageDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    
+                    // Reload to apply translations
+                    setTimeout(() => window.location.reload(), 100);
+                }
             }
             
             function updateLanguageButton() {
                 const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
                 const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
                 
-                const currentLang = i18nInstance.currentLocale;
+                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
                 const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLang');
+                const langEl = document.getElementById('currentLangCode');
                 const htmlTag = document.getElementById('htmlTag');
                 
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
-                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
-                if (htmlTag) htmlTag.lang = currentLang;
-            }
-            
-            // Toggle dropdown
-            document.addEventListener('click', (e) => {
-                const btn = document.getElementById('langBtn');
-                const dropdown = document.getElementById('langDropdown');
-                
-                if (btn && btn.contains(e.target)) {
-                    dropdown.classList.toggle('hidden');
-                } else if (dropdown && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            
-            // Initialize on load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initI18n);
-            } else {
-                initI18n();
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
+                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
+                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
             }
         </script>
     </body>
@@ -2074,50 +2152,57 @@ pages.get('/imoveis/:id', (c) => {
         </script>
 
         <script>
-            // Initialize i18n
-            let i18nInstance;
+            // Initialize i18n when page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize I18N
+                if (window.I18N) {
+                    window.I18N.init();
+                    updateLanguageButton();
+                }
+                
+                // Language selector dropdown toggle
+                const languageBtn = document.getElementById('currentLanguageBtn');
+                const languageDropdown = document.getElementById('languageDropdown');
+                
+                if (languageBtn && languageDropdown) {
+                    languageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageDropdown.classList.toggle('hidden');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', () => {
+                        languageDropdown.classList.add('hidden');
+                    });
+                }
+            });
             
-            async function initI18n() {
-                i18nInstance = await i18n.init();
-                updateLanguageButton();
-            }
-            
-            async function changeLanguage(locale) {
-                await i18nInstance.changeLocale(locale);
-                window.location.reload();
+            function changeLanguage(locale) {
+                if (window.I18N) {
+                    window.I18N.changeLanguage(locale);
+                    updateLanguageButton();
+                    
+                    // Close dropdown
+                    const dropdown = document.getElementById('languageDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    
+                    // Reload to apply translations
+                    setTimeout(() => window.location.reload(), 100);
+                }
             }
             
             function updateLanguageButton() {
                 const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
                 const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
                 
-                const currentLang = i18nInstance.currentLocale;
+                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
                 const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLang');
+                const langEl = document.getElementById('currentLangCode');
                 const htmlTag = document.getElementById('htmlTag');
                 
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
-                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
-                if (htmlTag) htmlTag.lang = currentLang;
-            }
-            
-            // Toggle dropdown
-            document.addEventListener('click', (e) => {
-                const btn = document.getElementById('langBtn');
-                const dropdown = document.getElementById('langDropdown');
-                
-                if (btn && btn.contains(e.target)) {
-                    dropdown.classList.toggle('hidden');
-                } else if (dropdown && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            
-            // Initialize on load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initI18n);
-            } else {
-                initI18n();
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
+                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
+                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
             }
         </script>
     </body>
@@ -2554,50 +2639,57 @@ pages.get('/cadastrar-imovel', (c) => {
         </script>
 
         <script>
-            // Initialize i18n
-            let i18nInstance;
+            // Initialize i18n when page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                // Initialize I18N
+                if (window.I18N) {
+                    window.I18N.init();
+                    updateLanguageButton();
+                }
+                
+                // Language selector dropdown toggle
+                const languageBtn = document.getElementById('currentLanguageBtn');
+                const languageDropdown = document.getElementById('languageDropdown');
+                
+                if (languageBtn && languageDropdown) {
+                    languageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageDropdown.classList.toggle('hidden');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', () => {
+                        languageDropdown.classList.add('hidden');
+                    });
+                }
+            });
             
-            async function initI18n() {
-                i18nInstance = await i18n.init();
-                updateLanguageButton();
-            }
-            
-            async function changeLanguage(locale) {
-                await i18nInstance.changeLocale(locale);
-                window.location.reload();
+            function changeLanguage(locale) {
+                if (window.I18N) {
+                    window.I18N.changeLanguage(locale);
+                    updateLanguageButton();
+                    
+                    // Close dropdown
+                    const dropdown = document.getElementById('languageDropdown');
+                    if (dropdown) dropdown.classList.add('hidden');
+                    
+                    // Reload to apply translations
+                    setTimeout(() => window.location.reload(), 100);
+                }
             }
             
             function updateLanguageButton() {
                 const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
                 const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
                 
-                const currentLang = i18nInstance.currentLocale;
+                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
                 const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLang');
+                const langEl = document.getElementById('currentLangCode');
                 const htmlTag = document.getElementById('htmlTag');
                 
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇧🇷';
-                if (langEl) langEl.textContent = langs[currentLang] || 'PT';
-                if (htmlTag) htmlTag.lang = currentLang;
-            }
-            
-            // Toggle dropdown
-            document.addEventListener('click', (e) => {
-                const btn = document.getElementById('langBtn');
-                const dropdown = document.getElementById('langDropdown');
-                
-                if (btn && btn.contains(e.target)) {
-                    dropdown.classList.toggle('hidden');
-                } else if (dropdown && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-            
-            // Initialize on load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initI18n);
-            } else {
-                initI18n();
+                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
+                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
+                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
             }
         </script>
     </body>
