@@ -6,6 +6,141 @@ type Bindings = {
 
 const imoveis = new Hono<{ Bindings: Bindings }>()
 
+// Função para gerar ID único
+function generateId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+}
+
+// Função para obter usuário do token
+async function getUserFromToken(token: string, DB: D1Database): Promise<any> {
+  const sessao = await DB.prepare(`
+    SELECT s.*, u.*
+    FROM sessoes s
+    JOIN usuarios u ON s.usuario_id = u.id
+    WHERE s.token = ? AND s.expires_at > datetime('now')
+  `).bind(token).first()
+  
+  return sessao
+}
+
+// POST /api/imoveis - Cadastrar novo imóvel (proprietários)
+imoveis.post('/', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({
+        success: false,
+        error: 'É necessário estar logado para cadastrar imóveis'
+      }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    const usuario = await getUserFromToken(token, DB)
+    
+    if (!usuario) {
+      return c.json({
+        success: false,
+        error: 'Sessão inválida ou expirada'
+      }, 401)
+    }
+    
+    if (usuario.tipo !== 'proprietario' && usuario.tipo !== 'corretor') {
+      return c.json({
+        success: false,
+        error: 'Apenas proprietários e corretores podem cadastrar imóveis'
+      }, 403)
+    }
+    
+    const body = await c.req.json()
+    const {
+      titulo, descricao, tipo, finalidade,
+      preco_aluguel, preco_venda, condominio, iptu,
+      endereco_rua, endereco_numero, endereco_complemento,
+      endereco_bairro, endereco_cidade, endereco_estado, endereco_cep,
+      quartos, banheiros, vagas_garagem, area_util, area_total,
+      mobiliado, pet_friendly, comodidades, foto_capa,
+      destaque  // Nova flag de destaque
+    } = body
+    
+    // Validações básicas
+    if (!titulo || !tipo || !finalidade || !endereco_rua || !endereco_cidade || !endereco_estado) {
+      return c.json({
+        success: false,
+        error: 'Campos obrigatórios: titulo, tipo, finalidade, endereço completo'
+      }, 400)
+    }
+    
+    // Validar tipo
+    const tiposValidos = ['apartamento', 'casa', 'kitnet', 'cobertura', 'terreno', 'comercial', 'rural']
+    if (!tiposValidos.includes(tipo)) {
+      return c.json({
+        success: false,
+        error: 'Tipo inválido'
+      }, 400)
+    }
+    
+    // Validar finalidade
+    const finalidadesValidas = ['aluguel', 'venda', 'ambos']
+    if (!finalidadesValidas.includes(finalidade)) {
+      return c.json({
+        success: false,
+        error: 'Finalidade inválida'
+      }, 400)
+    }
+    
+    // Criar imóvel
+    const imovelId = generateId('imovel')
+    await DB.prepare(`
+      INSERT INTO imoveis (
+        id, proprietario_id, titulo, descricao, tipo, finalidade,
+        preco_aluguel, preco_venda, condominio, iptu,
+        endereco_rua, endereco_numero, endereco_complemento,
+        endereco_bairro, endereco_cidade, endereco_estado, endereco_cep,
+        quartos, banheiros, vagas_garagem, area_util, area_total,
+        mobiliado, pet_friendly, comodidades, foto_capa,
+        destaque, disponivel
+      ) VALUES (
+        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, 1
+      )
+    `).bind(
+      imovelId, usuario.usuario_id, titulo, descricao || null, tipo, finalidade,
+      preco_aluguel || null, preco_venda || null, condominio || 0, iptu || 0,
+      endereco_rua, endereco_numero, endereco_complemento || null,
+      endereco_bairro, endereco_cidade, endereco_estado, endereco_cep,
+      quartos || 0, banheiros || 0, vagas_garagem || 0, area_util || 0, area_total || 0,
+      mobiliado ? 1 : 0, pet_friendly ? 1 : 0,
+      comodidades ? JSON.stringify(comodidades) : null,
+      foto_capa || null,
+      destaque ? 1 : 0  // Salvar flag de destaque
+    ).run()
+    
+    return c.json({
+      success: true,
+      message: 'Imóvel cadastrado com sucesso',
+      data: {
+        imovel_id: imovelId,
+        titulo: titulo,
+        destaque: destaque ? true : false
+      }
+    }, 201)
+    
+  } catch (error) {
+    console.error('Erro ao cadastrar imóvel:', error)
+    return c.json({
+      success: false,
+      error: 'Erro ao cadastrar imóvel'
+    }, 500)
+  }
+})
+
 // GET /api/imoveis - Listar todos os imóveis
 imoveis.get('/', async (c) => {
   try {

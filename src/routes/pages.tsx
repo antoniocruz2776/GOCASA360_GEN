@@ -184,8 +184,87 @@ pages.get('/imoveis', (c) => {
           
           // Buscar imóveis ao carregar a página
           document.addEventListener('DOMContentLoaded', () => {
+            // Carregar imóveis em destaque na homepage
+            if (window.location.pathname === '/') {
+              carregarImoveisDestaque();
+            }
             buscarImoveis();
           });
+          
+          // Função para carregar imóveis em destaque
+          async function carregarImoveisDestaque() {
+            const container = document.getElementById('featured-properties');
+            if (!container) return;
+            
+            try {
+              const response = await fetch('/api/imoveis/destaque/list?limit=6');
+              const data = await response.json();
+              
+              if (data.success && data.data.length > 0) {
+                container.innerHTML = data.data.map(imovel => {
+                  const preco = imovel.finalidade === 'venda' || (imovel.finalidade === 'ambos' && imovel.preco_venda) 
+                    ? \`R$ \${formatNumber(imovel.preco_venda)}\`
+                    : \`R$ \${formatNumber(imovel.preco_aluguel)}/mês\`;
+                  
+                  const tipoLabel = imovel.finalidade === 'aluguel' ? 'Aluguel' : imovel.finalidade === 'venda' ? 'Venda' : 'Aluguel/Venda';
+                  const tipoIcon = imovel.tipo === 'apartamento' ? 'fa-building' : imovel.tipo === 'casa' ? 'fa-home' : 'fa-store';
+                  
+                  return \`
+                    <a href="/imoveis/\${imovel.id}" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all transform hover:-translate-y-2 duration-300 block">
+                      <div class="relative h-64 overflow-hidden">
+                        <img src="\${imovel.foto_capa || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800'}" 
+                             alt="\${imovel.titulo}" 
+                             class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                             onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800'">
+                        <div class="absolute top-4 left-4 flex gap-2">
+                          <span class="bg-accent text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center shadow-lg">
+                            <i class="fas fa-star mr-1"></i> Destaque
+                          </span>
+                          <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                            \${tipoLabel}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="p-6">
+                        <h3 class="font-bold text-xl text-gray-800 mb-2 line-clamp-2 hover:text-primary transition">\${imovel.titulo}</h3>
+                        <p class="text-gray-600 mb-3 flex items-center">
+                          <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+                          \${imovel.endereco_cidade}, \${imovel.endereco_estado}
+                        </p>
+                        <div class="flex items-center justify-between text-sm text-gray-600 mb-4 pb-4 border-b border-gray-100">
+                          <span class="flex items-center"><i class="\${tipoIcon} mr-1"></i> \${imovel.tipo}</span>
+                          <span class="flex items-center"><i class="fas fa-bed mr-1"></i> \${imovel.quartos}</span>
+                          <span class="flex items-center"><i class="fas fa-bath mr-1"></i> \${imovel.banheiros}</span>
+                          <span class="flex items-center"><i class="fas fa-car mr-1"></i> \${imovel.vagas_garagem}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                          <span class="text-2xl font-bold text-primary">\${preco}</span>
+                          <span class="text-primary hover:text-secondary transition">
+                            Ver detalhes <i class="fas fa-arrow-right ml-1"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  \`;
+                }).join('');
+              } else {
+                container.innerHTML = \`
+                  <div class="col-span-3 text-center py-12 text-gray-500">
+                    <i class="fas fa-home text-6xl mb-4 opacity-20"></i>
+                    <p>Nenhum imóvel em destaque no momento</p>
+                  </div>
+                \`;
+              }
+            } catch (error) {
+              console.error('Erro ao carregar imóveis em destaque:', error);
+              container.innerHTML = \`
+                <div class="col-span-3 text-center py-12 text-gray-500">
+                  <i class="fas fa-exclamation-triangle text-6xl mb-4 opacity-20"></i>
+                  <p>Erro ao carregar imóveis em destaque</p>
+                </div>
+              \`;
+            }
+          }
           
           async function buscarImoveis(page = 1) {
             currentPage = page;
@@ -469,6 +548,59 @@ pages.get('/', (c) => {
             </div>
         </section>
 
+        <!-- Featured Properties Section -->
+        <section class="py-16 bg-gradient-to-b from-gray-50 to-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <div class="inline-block">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-3">
+                            <i class="fas fa-star text-accent mr-3"></i>
+                            Imóveis em Destaque
+                        </h2>
+                        <div class="h-1 w-32 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
+                    </div>
+                    <p class="text-gray-600 mt-4 text-lg">Confira nossas melhores oportunidades selecionadas para você</p>
+                </div>
+                
+                <!-- Featured Properties Cards -->
+                <div id="featured-properties" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                    <!-- Loading skeleton -->
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
+                        <div class="h-64 bg-gray-200"></div>
+                        <div class="p-6 space-y-3">
+                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse hidden md:block">
+                        <div class="h-64 bg-gray-200"></div>
+                        <div class="p-6 space-y-3">
+                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse hidden lg:block">
+                        <div class="h-64 bg-gray-200"></div>
+                        <div class="p-6 space-y-3">
+                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- View All Button -->
+                <div class="text-center">
+                    <a href="/imoveis" class="inline-block bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transition-all transform hover:scale-105">
+                        Ver Todos os Imóveis
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- Stats Section -->
         <section class="py-16 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -493,8 +625,38 @@ pages.get('/', (c) => {
             </div>
         </section>
 
+        <!-- Imóveis em Destaque Section -->
+        <section class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-dark mb-4">
+                        <i class="fas fa-star text-accent mr-3"></i>
+                        Imóveis em Destaque
+                    </h2>
+                    <p class="text-xl text-gray-600">Os melhores imóveis selecionados para você</p>
+                </div>
+                
+                <!-- Loading -->
+                <div id="destaquesLoading" class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-primary"></i>
+                    <p class="mt-4 text-gray-600">Carregando imóveis...</p>
+                </div>
+                
+                <!-- Grid de Imóveis -->
+                <div id="destaquesGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Os imóveis serão inseridos aqui via JavaScript -->
+                </div>
+                
+                <div class="text-center mt-12">
+                    <a href="/imoveis" class="inline-block bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition font-semibold text-lg">
+                        <i class="fas fa-search mr-2"></i> Ver Todos os Imóveis
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- Features Section -->
-        <section id="sobre" class="py-20 bg-gray-50">
+        <section id="sobre" class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-4xl font-bold text-dark mb-4">Por Que Escolher a GOCASA360IT?</h2>
@@ -618,6 +780,85 @@ pages.get('/', (c) => {
           function aplicarFiltroRapido(param, value) {
             window.location.href = \`/imoveis?\${param}=\${value}&finalidade=aluguel\`;
           }
+          
+          // Carregar imóveis em destaque
+          async function carregarDestaquesHome() {
+            try {
+              const response = await fetch('/api/imoveis/destaque/list?limit=6');
+              const data = await response.json();
+              
+              if (data.success && data.data.length > 0) {
+                renderDestaquesHome(data.data);
+                document.getElementById('destaquesLoading').classList.add('hidden');
+                document.getElementById('destaquesGrid').classList.remove('hidden');
+              } else {
+                document.getElementById('destaquesLoading').innerHTML = 
+                  '<p class="text-gray-500">Nenhum imóvel em destaque no momento.</p>';
+              }
+            } catch (error) {
+              console.error('Erro ao carregar destaques:', error);
+              document.getElementById('destaquesLoading').innerHTML = 
+                '<p class="text-red-500">Erro ao carregar imóveis em destaque.</p>';
+            }
+          }
+          
+          function renderDestaquesHome(imoveis) {
+            const grid = document.getElementById('destaquesGrid');
+            
+            grid.innerHTML = imoveis.map(imovel => {
+              const preco = imovel.finalidade === 'venda' || (imovel.finalidade === 'ambos' && imovel.preco_venda)
+                ? \`R$ \${formatNumberHome(imovel.preco_venda)}\`
+                : \`R$ \${formatNumberHome(imovel.preco_aluguel)}/mês\`;
+              
+              const tipoLabel = imovel.finalidade === 'aluguel' ? 'Aluguel' : 
+                               imovel.finalidade === 'venda' ? 'Venda' : 'Aluguel/Venda';
+              
+              return \`
+                <a href="/imoveis/\${imovel.id}" class="bg-white rounded-xl shadow-lg overflow-hidden card-hover cursor-pointer block">
+                  <div class="relative">
+                    <img src="\${imovel.foto_capa}" alt="\${imovel.titulo}" class="w-full h-56 object-cover">
+                    <span class="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      \${tipoLabel}
+                    </span>
+                    <span class="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      <i class="fas fa-star mr-1"></i> Destaque
+                    </span>
+                  </div>
+                  
+                  <div class="p-6">
+                    <h3 class="text-xl font-bold text-dark mb-2 line-clamp-2">\${imovel.titulo}</h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                      <i class="fas fa-map-marker-alt mr-1"></i>
+                      \${imovel.endereco_bairro}, \${imovel.endereco_cidade} - \${imovel.endereco_estado}
+                    </p>
+                    
+                    <div class="flex items-center space-x-4 text-sm text-gray-600 mb-4">
+                      <span><i class="fas fa-bed mr-1"></i> \${imovel.quartos}</span>
+                      <span><i class="fas fa-bath mr-1"></i> \${imovel.banheiros}</span>
+                      <span><i class="fas fa-car mr-1"></i> \${imovel.vagas_garagem}</span>
+                      <span><i class="fas fa-ruler-combined mr-1"></i> \${imovel.area_util}m²</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-4 border-t">
+                      <span class="text-2xl font-bold text-primary">\${preco}</span>
+                      <button class="text-gray-400 hover:text-red-500 transition" onclick="event.preventDefault(); alert('Faça login para favoritar');">
+                        <i class="far fa-heart text-xl"></i>
+                      </button>
+                    </div>
+                  </div>
+                </a>
+              \`;
+            }).join('');
+          }
+          
+          function formatNumberHome(num) {
+            return new Intl.NumberFormat('pt-BR').format(num);
+          }
+          
+          // Carregar destaques ao carregar a página
+          document.addEventListener('DOMContentLoaded', () => {
+            carregarDestaquesHome();
+          });
         </script>
     </body>
     </html>
@@ -1629,6 +1870,437 @@ pages.get('/imoveis/:id', (c) => {
               despensa: 'Despensa'
             };
             return comodidades[comodidade] || comodidade;
+          }
+        </script>
+    </body>
+    </html>
+  `)
+})
+
+// Página de Cadastro de Imóvel (Proprietários)
+pages.get('/cadastrar-imovel', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cadastrar Imóvel - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <script>
+          tailwind.config = {
+            theme: {
+              extend: {
+                colors: {
+                  primary: '#2563eb',
+                  secondary: '#0ea5e9'
+                }
+              }
+            }
+          }
+        </script>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+          body { font-family: 'Inter', sans-serif; }
+        </style>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <a href="/" class="flex items-center space-x-2">
+                        <i class="fas fa-home text-3xl text-primary"></i>
+                        <span class="text-2xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                    </a>
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-gray-700 hover:text-primary transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Anunciar Imóvel</h1>
+                <p class="text-gray-600 mb-8">Preencha os dados do seu imóvel para começar a anunciar</p>
+                
+                <div id="alert" class="hidden mb-6"></div>
+                
+                <form id="formImovel" class="space-y-8">
+                    <!-- Informações Básicas -->
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Informações Básicas</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Título do Anúncio *</label>
+                                <input type="text" id="titulo" required maxlength="100"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                                       placeholder="Ex: Apartamento moderno com 2 quartos">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Imóvel *</label>
+                                <select id="tipo" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                                    <option value="">Selecione...</option>
+                                    <option value="apartamento">Apartamento</option>
+                                    <option value="casa">Casa</option>
+                                    <option value="kitnet">Kitnet</option>
+                                    <option value="cobertura">Cobertura</option>
+                                    <option value="terreno">Terreno</option>
+                                    <option value="comercial">Comercial</option>
+                                    <option value="rural">Rural</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Finalidade *</label>
+                                <select id="finalidade" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                                    <option value="">Selecione...</option>
+                                    <option value="aluguel">Aluguel</option>
+                                    <option value="venda">Venda</option>
+                                    <option value="ambos">Aluguel e Venda</option>
+                                </select>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                                <textarea id="descricao" rows="4"
+                                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                                          placeholder="Descreva as características e diferenciais do imóvel..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Valores -->
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Valores</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Valor Aluguel (R$)</label>
+                                <input type="number" id="preco_aluguel" step="0.01"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Valor Venda (R$)</label>
+                                <input type="number" id="preco_venda" step="0.01"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Condomínio (R$)</label>
+                                <input type="number" id="condominio" step="0.01"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">IPTU (R$/mês)</label>
+                                <input type="number" id="iptu" step="0.01"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Endereço -->
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Endereço</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CEP *</label>
+                                <input type="text" id="endereco_cep" required maxlength="9"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                                       placeholder="00000-000">
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Rua/Avenida *</label>
+                                <input type="text" id="endereco_rua" required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Número *</label>
+                                <input type="text" id="endereco_numero" required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Complemento</label>
+                                <input type="text" id="endereco_complemento"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                                       placeholder="Apto, Bloco, etc">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bairro *</label>
+                                <input type="text" id="endereco_bairro" required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Cidade *</label>
+                                <input type="text" id="endereco_cidade" required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Estado *</label>
+                                <select id="endereco_estado" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                                    <option value="">Selecione...</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="ES">Espírito Santo</option>
+                                    <option value="BA">Bahia</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Características -->
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Características</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Quartos</label>
+                                <input type="number" id="quartos" min="0"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Banheiros</label>
+                                <input type="number" id="banheiros" min="0"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Vagas</label>
+                                <input type="number" id="vagas_garagem" min="0"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Área Útil (m²)</label>
+                                <input type="number" id="area_util" step="0.01"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Área Total (m²)</label>
+                                <input type="number" id="area_total" step="0.01"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comodidades e Opções -->
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Comodidades e Opções</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="mobiliado" class="w-5 h-5 text-primary">
+                                <span class="text-sm">Mobiliado</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="pet_friendly" class="w-5 h-5 text-primary">
+                                <span class="text-sm">Pet Friendly</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" value="piscina" class="comodidade w-5 h-5 text-primary">
+                                <span class="text-sm">Piscina</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" value="academia" class="comodidade w-5 h-5 text-primary">
+                                <span class="text-sm">Academia</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" value="churrasqueira" class="comodidade w-5 h-5 text-primary">
+                                <span class="text-sm">Churrasqueira</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" value="salao_festas" class="comodidade w-5 h-5 text-primary">
+                                <span class="text-sm">Salão de Festas</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" value="playground" class="comodidade w-5 h-5 text-primary">
+                                <span class="text-sm">Playground</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" value="elevador" class="comodidade w-5 h-5 text-primary">
+                                <span class="text-sm">Elevador</span>
+                            </label>
+                            
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" value="portaria_24h" class="comodidade w-5 h-5 text-primary">
+                                <span class="text-sm">Portaria 24h</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Destaque -->
+                        <div class="bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input type="checkbox" id="destaque" class="w-6 h-6 text-accent mt-1">
+                                <div>
+                                    <span class="text-lg font-bold text-amber-900 flex items-center">
+                                        <i class="fas fa-star text-accent mr-2"></i>
+                                        Destacar meu Imóvel na Página Principal
+                                    </span>
+                                    <p class="text-sm text-amber-700 mt-1">
+                                        Seu imóvel aparecerá na seção de destaques da home, recebendo muito mais visualizações!
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Foto -->
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Foto de Capa</h2>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">URL da Foto Principal</label>
+                            <input type="url" id="foto_capa"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                                   placeholder="https://...">
+                            <p class="text-xs text-gray-500 mt-1">Cole a URL de uma foto do imóvel (upload de fotos será adicionado em breve)</p>
+                        </div>
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="flex space-x-4 pt-6 border-t">
+                        <button type="button" onclick="window.location.href='/'"
+                                class="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-semibold">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="submitBtn"
+                                class="flex-1 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition font-semibold">
+                            <i class="fas fa-check mr-2"></i> Publicar Imóvel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+          const token = localStorage.getItem('token');
+          const usuario = localStorage.getItem('usuario') ? JSON.parse(localStorage.getItem('usuario')) : null;
+          
+          // Verificar autenticação e tipo
+          if (!token || !usuario) {
+            alert('Você precisa estar logado para cadastrar imóveis');
+            window.location.href = '/login';
+          } else if (usuario.tipo !== 'proprietario' && usuario.tipo !== 'corretor') {
+            alert('Apenas proprietários e corretores podem cadastrar imóveis');
+            window.location.href = '/';
+          }
+
+          document.getElementById('formImovel').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const formData = {
+              titulo: document.getElementById('titulo').value,
+              descricao: document.getElementById('descricao').value,
+              tipo: document.getElementById('tipo').value,
+              finalidade: document.getElementById('finalidade').value,
+              preco_aluguel: parseFloat(document.getElementById('preco_aluguel').value) || null,
+              preco_venda: parseFloat(document.getElementById('preco_venda').value) || null,
+              condominio: parseFloat(document.getElementById('condominio').value) || 0,
+              iptu: parseFloat(document.getElementById('iptu').value) || 0,
+              endereco_rua: document.getElementById('endereco_rua').value,
+              endereco_numero: document.getElementById('endereco_numero').value,
+              endereco_complemento: document.getElementById('endereco_complemento').value,
+              endereco_bairro: document.getElementById('endereco_bairro').value,
+              endereco_cidade: document.getElementById('endereco_cidade').value,
+              endereco_estado: document.getElementById('endereco_estado').value,
+              endereco_cep: document.getElementById('endereco_cep').value,
+              quartos: parseInt(document.getElementById('quartos').value) || 0,
+              banheiros: parseInt(document.getElementById('banheiros').value) || 0,
+              vagas_garagem: parseInt(document.getElementById('vagas_garagem').value) || 0,
+              area_util: parseFloat(document.getElementById('area_util').value) || 0,
+              area_total: parseFloat(document.getElementById('area_total').value) || 0,
+              mobiliado: document.getElementById('mobiliado').checked,
+              pet_friendly: document.getElementById('pet_friendly').checked,
+              foto_capa: document.getElementById('foto_capa').value,
+              destaque: document.getElementById('destaque').checked  // Incluir flag de destaque
+            };
+            
+            // Coletar comodidades selecionadas
+            const comodidades = Array.from(document.querySelectorAll('.comodidade:checked')).map(cb => cb.value);
+            formData.comodidades = comodidades;
+            
+            // Validações
+            if (formData.finalidade === 'aluguel' && !formData.preco_aluguel) {
+              showAlert('Para aluguel, o valor do aluguel é obrigatório', 'error');
+              return;
+            }
+            if (formData.finalidade === 'venda' && !formData.preco_venda) {
+              showAlert('Para venda, o valor de venda é obrigatório', 'error');
+              return;
+            }
+            if (formData.finalidade === 'ambos' && (!formData.preco_aluguel || !formData.preco_venda)) {
+              showAlert('Para aluguel e venda, ambos os valores são obrigatórios', 'error');
+              return;
+            }
+            
+            // Desabilitar botão
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Publicando...';
+            
+            try {
+              const response = await fetch('/api/imoveis', {
+                method: 'POST',
+                headers: {
+                  'Authorization': \`Bearer \${token}\`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                showAlert('Imóvel publicado com sucesso!', 'success');
+                setTimeout(() => {
+                  window.location.href = \`/imoveis/\${data.data.imovel_id}\`;
+                }, 1500);
+              } else {
+                showAlert(data.error || 'Erro ao publicar imóvel', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Publicar Imóvel';
+              }
+            } catch (error) {
+              console.error('Erro:', error);
+              showAlert('Erro ao publicar imóvel', 'error');
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Publicar Imóvel';
+            }
+          });
+          
+          function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200';
+            alertDiv.className = \`border rounded-lg p-4 \${bgColor}\`;
+            alertDiv.innerHTML = message;
+            alertDiv.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         </script>
     </body>
