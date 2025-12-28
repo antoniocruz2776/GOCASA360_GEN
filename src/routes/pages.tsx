@@ -624,4 +624,392 @@ pages.get('/', (c) => {
   `)
 })
 
+// Página de Login
+pages.get('/login', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <script>
+          tailwind.config = {
+            theme: {
+              extend: {
+                colors: {
+                  primary: '#2563eb',
+                  secondary: '#0ea5e9'
+                }
+              }
+            }
+          }
+        </script>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+          body { font-family: 'Inter', sans-serif; }
+        </style>
+    </head>
+    <body class="bg-gray-50">
+        <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div class="text-center">
+                    <a href="/" class="flex items-center justify-center space-x-2 mb-6">
+                        <i class="fas fa-home text-4xl text-primary"></i>
+                        <span class="text-3xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                    </a>
+                    <h2 class="text-3xl font-bold text-gray-900">Entrar na sua conta</h2>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Ou <a href="/cadastro" class="font-medium text-primary hover:text-secondary">crie uma conta nova</a>
+                    </p>
+                </div>
+                
+                <div id="alert" class="hidden"></div>
+                
+                <form id="loginForm" class="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input id="email" name="email" type="email" required 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="seu@email.com">
+                        </div>
+                        <div>
+                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                            <input id="senha" name="senha" type="password" required 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input id="lembrar" name="lembrar" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <label for="lembrar" class="ml-2 block text-sm text-gray-900">Lembrar-me</label>
+                        </div>
+                        <div class="text-sm">
+                            <a href="#" class="font-medium text-primary hover:text-secondary">Esqueceu a senha?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn"
+                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Entrar
+                    </button>
+                </form>
+                
+                <p class="mt-4 text-center text-sm text-gray-600">
+                    <a href="/" class="font-medium text-primary hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-1"></i> Voltar para home
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <script>
+          const form = document.getElementById('loginForm');
+          const alertDiv = document.getElementById('alert');
+          const submitBtn = document.getElementById('submitBtn');
+
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            // Desabilitar botão
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Entrando...';
+            
+            try {
+              const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, senha })
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                // Salvar token no localStorage
+                localStorage.setItem('token', data.data.token);
+                localStorage.setItem('usuario', JSON.stringify(data.data.usuario));
+                
+                // Mostrar sucesso
+                showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                
+                // Redirecionar baseado no tipo de usuário
+                setTimeout(() => {
+                  if (data.data.usuario.tipo === 'proprietario') {
+                    window.location.href = '/dashboard/proprietario';
+                  } else if (data.data.usuario.tipo === 'inquilino') {
+                    window.location.href = '/imoveis';
+                  } else {
+                    window.location.href = '/';
+                  }
+                }, 1500);
+              } else {
+                showAlert(data.error || 'Erro ao fazer login', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Entrar';
+              }
+            } catch (error) {
+              console.error('Erro:', error);
+              showAlert('Erro ao fazer login. Tente novamente.', 'error');
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Entrar';
+            }
+          });
+          
+          function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200';
+            alertDiv.className = \`border rounded-lg p-4 mb-4 \${bgColor}\`;
+            alertDiv.innerHTML = message;
+            alertDiv.classList.remove('hidden');
+          }
+        </script>
+    </body>
+    </html>
+  `)
+})
+
+// Página de Cadastro
+pages.get('/cadastro', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cadastro - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <script>
+          tailwind.config = {
+            theme: {
+              extend: {
+                colors: {
+                  primary: '#2563eb',
+                  secondary: '#0ea5e9'
+                }
+              }
+            }
+          }
+        </script>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+          body { font-family: 'Inter', sans-serif; }
+        </style>
+    </head>
+    <body class="bg-gray-50">
+        <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div class="text-center">
+                    <a href="/" class="flex items-center justify-center space-x-2 mb-6">
+                        <i class="fas fa-home text-4xl text-primary"></i>
+                        <span class="text-3xl font-bold text-dark">GOCASA<span class="text-primary">360IT</span></span>
+                    </a>
+                    <h2 class="text-3xl font-bold text-gray-900">Criar conta</h2>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Já tem uma conta? <a href="/login" class="font-medium text-primary hover:text-secondary">Faça login</a>
+                    </p>
+                </div>
+                
+                <div id="alert" class="hidden"></div>
+                
+                <form id="cadastroForm" class="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="nome_completo" class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                            <input id="nome_completo" name="nome_completo" type="text" required 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="João Silva">
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input id="email" name="email" type="email" required 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="seu@email.com">
+                        </div>
+                        
+                        <div>
+                            <label for="telefone" class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                            <input id="telefone" name="telefone" type="tel" 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="(11) 98765-4321">
+                        </div>
+                        
+                        <div>
+                            <label for="cpf_cnpj" class="block text-sm font-medium text-gray-700 mb-2">CPF/CNPJ</label>
+                            <input id="cpf_cnpj" name="cpf_cnpj" type="text" 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="000.000.000-00">
+                        </div>
+                        
+                        <div>
+                            <label for="tipo" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Usuário</label>
+                            <select id="tipo" name="tipo" required 
+                                    class="appearance-none relative block w-full px-4 py-3 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                                <option value="">Selecione...</option>
+                                <option value="inquilino">Inquilino / Comprador</option>
+                                <option value="proprietario">Proprietário</option>
+                                <option value="corretor">Corretor de Imóveis</option>
+                            </select>
+                            <p class="mt-2 text-xs text-gray-500">
+                                <span id="tipo-help"></span>
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                            <input id="senha" name="senha" type="password" required 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="••••••••">
+                            <p class="mt-1 text-xs text-gray-500">Mínimo 6 caracteres</p>
+                        </div>
+                        
+                        <div>
+                            <label for="senha_confirm" class="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha</label>
+                            <input id="senha_confirm" name="senha_confirm" type="password" required 
+                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input id="termos" name="termos" type="checkbox" required class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <label for="termos" class="ml-2 block text-sm text-gray-900">
+                            Concordo com os <a href="#" class="text-primary hover:text-secondary">Termos de Uso</a> e 
+                            <a href="#" class="text-primary hover:text-secondary">Política de Privacidade</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="submitBtn"
+                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Criar Conta
+                    </button>
+                </form>
+                
+                <p class="mt-4 text-center text-sm text-gray-600">
+                    <a href="/" class="font-medium text-primary hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-1"></i> Voltar para home
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <script>
+          const form = document.getElementById('cadastroForm');
+          const alertDiv = document.getElementById('alert');
+          const submitBtn = document.getElementById('submitBtn');
+          const tipoSelect = document.getElementById('tipo');
+          const tipoHelp = document.getElementById('tipo-help');
+          
+          // Mensagens de ajuda
+          const tipoHelpTexts = {
+            inquilino: 'Buscar imóveis para alugar ou comprar',
+            proprietario: 'Anunciar e gerenciar seus imóveis',
+            corretor: 'Intermediar negócios imobiliários'
+          };
+          
+          tipoSelect.addEventListener('change', (e) => {
+            tipoHelp.textContent = tipoHelpTexts[e.target.value] || '';
+          });
+
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nome_completo = document.getElementById('nome_completo').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const cpf_cnpj = document.getElementById('cpf_cnpj').value;
+            const tipo = document.getElementById('tipo').value;
+            const senha = document.getElementById('senha').value;
+            const senha_confirm = document.getElementById('senha_confirm').value;
+            
+            // Validações
+            if (senha.length < 6) {
+              showAlert('A senha deve ter no mínimo 6 caracteres', 'error');
+              return;
+            }
+            
+            if (senha !== senha_confirm) {
+              showAlert('As senhas não coincidem', 'error');
+              return;
+            }
+            
+            // Desabilitar botão
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Criando conta...';
+            
+            try {
+              const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                  nome_completo, 
+                  email, 
+                  telefone, 
+                  cpf_cnpj, 
+                  tipo, 
+                  senha 
+                })
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                // Salvar token no localStorage
+                localStorage.setItem('token', data.data.token);
+                localStorage.setItem('usuario', JSON.stringify(data.data.usuario));
+                
+                // Mostrar sucesso
+                showAlert('Conta criada com sucesso! Redirecionando...', 'success');
+                
+                // Redirecionar baseado no tipo de usuário
+                setTimeout(() => {
+                  if (tipo === 'proprietario') {
+                    window.location.href = '/dashboard/proprietario';
+                  } else if (tipo === 'inquilino') {
+                    window.location.href = '/imoveis';
+                  } else {
+                    window.location.href = '/';
+                  }
+                }, 1500);
+              } else {
+                showAlert(data.error || 'Erro ao criar conta', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Criar Conta';
+              }
+            } catch (error) {
+              console.error('Erro:', error);
+              showAlert('Erro ao criar conta. Tente novamente.', 'error');
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Criar Conta';
+            }
+          });
+          
+          function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200';
+            alertDiv.className = \`border rounded-lg p-4 mb-4 \${bgColor}\`;
+            alertDiv.innerHTML = message;
+            alertDiv.classList.remove('hidden');
+          }
+        </script>
+    </body>
+    </html>
+  `)
+})
+
 export default pages

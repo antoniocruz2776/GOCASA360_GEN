@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import imoveis from './routes/imoveis'
 import pages from './routes/pages'
+import auth from './routes/auth'
 
 type Bindings = {
   DB: D1Database;
@@ -22,6 +23,7 @@ app.get('/api/health', (c) => {
 })
 
 // API Routes
+app.route('/api/auth', auth)
 app.route('/api/imoveis', imoveis)
 
 // Page Routes
