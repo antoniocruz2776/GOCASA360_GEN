@@ -12,6 +12,24 @@ Esta pasta contém toda a documentação técnica do projeto GoCasa360IT, inclui
 
 ## 📁 Estrutura de Documentos
 
+### 🚀 **INÍCIO RÁPIDO**: [DoR.md](./DoR.md)
+**Definition of Ready - Documento Oficial de Prontidão**
+
+✅ **STATUS: APROVADO - Pronto para Desenvolvimento**
+
+Conteúdo:
+- ✅ Checklist DoR completo (6 categorias)
+- ✅ 10 user stories com critérios de aceitação (Given-When-Then)
+- ✅ 94 story points estimados (8-10 semanas)
+- ✅ Sprint breakdown: Sprint 1-2 (CRÍTICA), Sprint 3-4 (ALTA), Sprint 5-6 (MÉDIA)
+- ✅ APIs especificadas + modelos de dados + validações
+- ✅ Custos de infraestrutura (€0-€95/mês)
+- ✅ Todas as 18 diagramas de fluxo referenciados
+
+**Quando usar**: Antes de iniciar qualquer desenvolvimento, para entender o que deve ser implementado
+
+---
+
 ### 1. [PROPTECH_WORKFLOW.md](./PROPTECH_WORKFLOW.md)
 **Workflow Completo para Desenvolvimento de Plataforma Proptech**
 
@@ -106,9 +124,100 @@ Conteúdo:
 
 ---
 
+## 📊 Fluxos e Diagramas (18 Diagramas Mermaid)
+
+### 6. [DoR_ANALISE.md](./DoR_ANALISE.md)
+**Análise de Definition of Ready - Diagramas Faltantes**
+
+Conteúdo:
+- 📊 Status atual dos diagramas (4 existentes vs 18 faltantes)
+- 🎯 18 diagramas de referência em Mermaid
+- 🔥 Priorização (CRÍTICA, ALTA, MÉDIA, BAIXA)
+- 📋 Checklist de implementação
+- 💡 Benefícios do DoR completo
+
+**Quando usar**: Para identificar gaps na documentação de fluxos
+
+---
+
+### 7. [DoR_ANALISE_FALTANTE.md](./DoR_ANALISE_FALTANTE.md)
+**Status de Completude dos Diagramas DoR**
+
+Conteúdo:
+- ✅ Status 100% completo
+- 📊 Estatísticas: 36 diagramas, 5.801 linhas, 184 KB
+- 🚀 Roadmap de implementação (Sprints 1-6)
+- 💰 Custos estimados por serviço
+- 📦 Links para todos os documentos
+
+**Quando usar**: Para verificar o progresso da documentação
+
+---
+
+### 8. [FLUXOS_USUARIO.md](./FLUXOS_USUARIO.md)
+**8 Fluxos de Usuário Completos**
+
+Conteúdo:
+- 1️⃣ Registro/Cadastro de inquilino
+- 2️⃣ Login de usuários
+- 3️⃣ Busca de imóveis com filtros
+- 4️⃣ Cadastro de imóvel (Wizard 5 etapas) **[MAIS COMPLEXO]**
+- 5️⃣ Agendamento de visitas
+- 6️⃣ Chat/Mensagens em tempo real
+- 7️⃣ Sistema de favoritos
+- 8️⃣ Dashboard do proprietário
+
+**Quando usar**: Entender jornadas do usuário, implementar features frontend
+
+---
+
+### 9. [FLUXOS_INTEGRACAO.md](./FLUXOS_INTEGRACAO.md)
+**5 Integrações Externas**
+
+Conteúdo:
+- 📤 Upload de fotos (Cloudflare R2 + presigned URLs)
+- 🗺️ Google Maps (Places + Geocoding + Maps)
+- 📧 SendGrid (Emails transacionais + webhooks)
+- 🔐 Google OAuth (Login social)
+- 💬 Firebase Chat (Real-time Firestore + FCM)
+
+**Quando usar**: Integrar APIs externas, configurar serviços de terceiros
+
+---
+
+### 10. [FLUXOS_SEGURANCA.md](./FLUXOS_SEGURANCA.md)
+**2 Fluxos de Segurança & GDPR**
+
+Conteúdo:
+- 🛡️ GDPR Consent (4 purposes, consent history)
+- 🔑 Recuperação de senha (token UUID, expiration 1h)
+
+**Quando usar**: Implementar compliance GDPR, recuperação de senha segura
+
+---
+
+### 11. [FLUXOS_DADOS.md](./FLUXOS_DADOS.md)
+**3 Fluxos de Processamento de Dados**
+
+Conteúdo:
+- 🔍 Busca com filtros e cache (Cloudflare KV)
+- 📍 Geolocalização (busca por proximidade 5km)
+- 💳 Análise de crédito (Fase 2 - CRIF API Itália)
+
+**Quando usar**: Implementar buscas, geolocalização, análise de crédito
+
+---
+
 ## 🗺️ Navegação Rápida
 
 ### Por Área de Interesse
+
+#### 🚀 Desenvolvimento (INÍCIO AQUI)
+- **[DoR.md](./DoR.md)** - Definition of Ready (10 stories, 94 SP)
+- [FLUXOS_USUARIO.md](./FLUXOS_USUARIO.md) - 8 user flows
+- [FLUXOS_INTEGRACAO.md](./FLUXOS_INTEGRACAO.md) - 5 integrações
+- [FLUXOS_SEGURANCA.md](./FLUXOS_SEGURANCA.md) - 2 security flows
+- [FLUXOS_DADOS.md](./FLUXOS_DADOS.md) - 3 data flows
 
 #### 🏗️ Arquitetura e Design
 - [Arquitetura de Microserviços](./ARQUITETURA_MICROSERVICOS.md)
@@ -117,6 +226,7 @@ Conteúdo:
 #### 📋 Planejamento e Gestão
 - [Proptech Workflow](./PROPTECH_WORKFLOW.md)
 - [Comparação GoCasa360](./COMPARACAO_GOCASA360.md)
+- [DoR_ANALISE.md](./DoR_ANALISE.md) - Gap analysis
 
 #### ⚙️ DevOps e Automação
 - [CI/CD Pipeline](./CI_CD_PIPELINE.md)
@@ -124,14 +234,49 @@ Conteúdo:
 #### 💰 Custos e ROI
 - [Stack Tecnológico - Comparação de Custos](./STACK_TECNOLOGICO.md#-comparao-de-custos)
 - [Comparação GoCasa360 - Investimento](./COMPARACAO_GOCASA360.md#-comparao-de-custos)
+- [DoR.md - Custos de Infraestrutura](./DoR.md#-custos-de-infraestrutura)
 
 #### 🎯 Roadmap e Próximos Passos
+- **[DoR.md - Roadmap de Implementação](./DoR.md#-roadmap-de-implementação)** ⭐
 - [Comparação GoCasa360 - Roadmap](./COMPARACAO_GOCASA360.md#-roadmap-de-evoluo)
 - [Proptech Workflow - MVP](./PROPTECH_WORKFLOW.md#-fase-1-planejamento-e-discovery-4-6-semanas)
 
 ---
 
-## 📊 Status do Projeto (Resumo)
+## 📊 Status do Projeto (Atualizado: 28/12/2025)
+
+### ✅ Definition of Ready (DoR): 100% COMPLETO
+
+| Categoria | Status | Detalhes |
+|-----------|--------|----------|
+| **Documentação** | ✅ 100% | 18 diagramas + 10 stories + 6 análises |
+| **Fluxos Mermaid** | ✅ 100% | 36 diagramas criados |
+| **User Stories** | ✅ 100% | 10 stories com acceptance criteria |
+| **Estimativas** | ✅ 100% | 94 story points (8-10 semanas) |
+| **DoR Status** | ✅ APROVADO | Pronto para desenvolvimento |
+
+### 📦 Entregáveis Finais
+
+| Documento | Linhas | Tamanho | Diagramas | Status |
+|-----------|--------|---------|-----------|--------|
+| DoR.md | 670 | 21 KB | 0 | ✅ Oficial |
+| FLUXOS_USUARIO.md | 1.033 | 28 KB | 8 | ✅ Completo |
+| FLUXOS_INTEGRACAO.md | 633 | 20 KB | 5 | ✅ Completo |
+| FLUXOS_SEGURANCA.md | 118 | 4 KB | 2 | ✅ Completo |
+| FLUXOS_DADOS.md | 131 | 4 KB | 3 | ✅ Completo |
+| DoR_ANALISE.md | 866 | 24 KB | 18 | ✅ Completo |
+| DoR_ANALISE_FALTANTE.md | 382 | 14 KB | 0 | ✅ Completo |
+| **TOTAL** | **3.833** | **115 KB** | **36** | **✅ 100%** |
+
+### 🚀 Próximo Milestone
+
+**Sprint 1 (2 semanas)** - Início: A definir
+- Story 1: Cadastro de Imóvel (Wizard) - 21 SP
+- Story 2: Upload de Fotos (R2) - 8 SP
+- Story 3: Google Maps - 8 SP
+- **Total Sprint**: 37 SP
+
+### 📈 Resumo Técnico
 
 | Categoria | Status | Progresso |
 |-----------|--------|-----------|
