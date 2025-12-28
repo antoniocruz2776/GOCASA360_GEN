@@ -5,6 +5,8 @@ class WizardImovel {
   constructor() {
     this.currentStep = 1;
     this.totalSteps = 5;
+    this.editMode = false;
+    this.imovelId = null;
     this.formData = {
       // Etapa 1: Tipo + Endereço
       tipo: '',
@@ -50,10 +52,82 @@ class WizardImovel {
     this.init();
   }
   
-  init() {
+  async init() {
+    // Detectar modo de edição
+    const urlParams = new URLSearchParams(window.location.search);
+    this.imovelId = urlParams.get('edit');
+    this.editMode = !!this.imovelId;
+    
+    // Se estiver em modo de edição, carregar dados do imóvel
+    if (this.editMode) {
+      await this.loadImovelData(this.imovelId);
+    }
+    
     this.renderWizard();
     this.attachEventListeners();
     this.updateProgressBar();
+  }
+  
+  async loadImovelData(imovelId) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/imoveis/${imovelId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        const imovel = data.data;
+        
+        // Mapear dados do imóvel para formData
+        this.formData = {
+          tipo: imovel.tipo || '',
+          finalidade: imovel.finalidade || '',
+          titulo: imovel.titulo || '',
+          endereco_rua: imovel.endereco_rua || '',
+          endereco_numero: imovel.endereco_numero || '',
+          endereco_complemento: imovel.endereco_complemento || '',
+          endereco_bairro: imovel.endereco_bairro || '',
+          endereco_cidade: imovel.endereco_cidade || '',
+          endereco_estado: imovel.endereco_estado || '',
+          endereco_cep: imovel.endereco_cep || '',
+          endereco_latitude: imovel.endereco_latitude,
+          endereco_longitude: imovel.endereco_longitude,
+          
+          quartos: imovel.quartos || 0,
+          banheiros: imovel.banheiros || 0,
+          vagas_garagem: imovel.vagas_garagem || 0,
+          area_util: imovel.area_util || 0,
+          area_total: imovel.area_total || 0,
+          mobiliado: !!imovel.mobiliado,
+          pet_friendly: !!imovel.pet_friendly,
+          comodidades: Array.isArray(imovel.comodidades) ? imovel.comodidades : [],
+          
+          fotos: Array.isArray(imovel.fotos) ? imovel.fotos.map(url => ({ url, name: 'Foto existente', size: 0 })) : [],
+          foto_capa: imovel.foto_capa || '',
+          
+          classe_energetica: imovel.classe_energetica || '',
+          condominio: imovel.condominio || 0,
+          iptu: imovel.iptu || 0,
+          
+          preco_aluguel: imovel.preco_aluguel,
+          preco_venda: imovel.preco_venda,
+          descricao: imovel.descricao || '',
+          disponivel: imovel.disponivel !== undefined ? !!imovel.disponivel : true,
+          destaque: !!imovel.destaque
+        };
+        
+        console.log('Dados do imóvel carregados:', this.formData);
+      } else {
+        this.showAlert('Erro ao carregar dados do imóvel', 'error');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar imóvel:', error);
+      this.showAlert('Erro ao carregar dados do imóvel', 'error');
+    }
   }
   
   renderWizard() {
@@ -101,7 +175,7 @@ class WizardImovel {
           </button>
           
           <button type="button" id="btnProximo" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition">
-            ${this.currentStep === this.totalSteps ? '<i class="fas fa-check mr-2"></i> Publicar' : 'Próximo <i class="fas fa-arrow-right ml-2"></i>'}
+            ${this.currentStep === this.totalSteps ? (this.editMode ? '<i class="fas fa-save mr-2"></i> Atualizar' : '<i class="fas fa-check mr-2"></i> Publicar') : 'Próximo <i class="fas fa-arrow-right ml-2"></i>'}
           </button>
         </div>
       </div>
@@ -134,8 +208,8 @@ class WizardImovel {
     return `
       <div class="space-y-6">
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">Informações Básicas</h2>
-          <p class="text-gray-600">Comece informando o tipo e localização do imóvel</p>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">${this.editMode ? 'Editar Imóvel' : 'Informações Básicas'}</h2>
+          <p class="text-gray-600">${this.editMode ? 'Atualize as informações do imóvel' : 'Comece informando o tipo e localização do imóvel'}</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -900,8 +974,12 @@ class WizardImovel {
         return;
       }
       
-      const response = await fetch('/api/imoveis', {
-        method: 'POST',
+      // Decidir método e URL baseado no modo
+      const method = this.editMode ? 'PUT' : 'POST';
+      const url = this.editMode ? `/api/imoveis/${this.imovelId}` : '/api/imoveis';
+      
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -913,13 +991,15 @@ class WizardImovel {
       
       if (data.success) {
         this.showAlert(
-          isDraft ? 'Rascunho salvo com sucesso!' : 'Imóvel publicado com sucesso!',
+          this.editMode 
+            ? 'Imóvel atualizado com sucesso!' 
+            : (isDraft ? 'Rascunho salvo com sucesso!' : 'Imóvel publicado com sucesso!'),
           'success'
         );
         
         setTimeout(() => {
-          // Redirecionar para dashboard ou página do imóvel
-          window.location.href = isDraft ? '/dashboard' : `/imoveis/${data.data.id}`;
+          // Redirecionar para dashboard
+          window.location.href = '/dashboard';
         }, 2000);
       } else {
         this.showAlert(data.message || 'Erro ao salvar imóvel', 'error');
