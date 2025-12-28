@@ -13,7 +13,7 @@ pages.get('/imoveis', (c) => {
         <title>Buscar Imóveis - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
         <script>
           tailwind.config = {
             theme: {
@@ -63,7 +63,15 @@ pages.get('/imoveis', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
+                        <div class="flex items-center space-x-2 group">
+                            <div class="bg-gradient-to-br from-primary to-secondary p-2 rounded-lg shadow-md group-hover:shadow-lg transition">
+                                <i class="fas fa-home text-white text-2xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-xl tracking-tight">GoCasa</span>
+                                <span class="text-secondary font-semibold text-xs -mt-1">360</span>
+                            </div>
+                        </div>
                     </a>
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition">Buscar Imóveis</a>
@@ -511,7 +519,7 @@ pages.get('/', (c) => {
         <meta name="description" content="Plataforma completa para aluguel e venda de imóveis. Encontre seu lar ideal com tecnologia e segurança.">
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
         <script>
           tailwind.config = {
             theme: {
@@ -568,7 +576,15 @@ pages.get('/', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
+                        <div class="flex items-center space-x-2 group">
+                            <div class="bg-gradient-to-br from-primary to-secondary p-2 rounded-lg shadow-md group-hover:shadow-lg transition">
+                                <i class="fas fa-home text-white text-2xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-xl tracking-tight">GoCasa</span>
+                                <span class="text-secondary font-semibold text-xs -mt-1">360</span>
+                            </div>
+                        </div>
                     </a>
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition" data-i18n="nav.search">Buscar Imóveis</a>
@@ -766,7 +782,15 @@ pages.get('/', (c) => {
                 <div class="grid md:grid-cols-4 gap-8 mb-8">
                     <div>
                         <div class="mb-4">
-                            <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-10 w-auto brightness-0 invert">
+                            <div class="flex items-center space-x-2">
+                                <div class="bg-white p-2 rounded-lg">
+                                    <i class="fas fa-home text-primary text-3xl"></i>
+                                </div>
+                                <div class="flex flex-col text-white">
+                                    <span class="font-bold text-2xl tracking-tight">GoCasa</span>
+                                    <span class="font-semibold text-sm -mt-1 opacity-90">360</span>
+                                </div>
+                            </div>
                         </div>
                         <p class="text-gray-400" data-i18n="footer.slogan">Sua casa, nossa tecnologia</p>
                     </div>
@@ -988,7 +1012,7 @@ pages.get('/login', (c) => {
         <title>Login - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
         <script>
           tailwind.config = {
             theme: {
@@ -1012,7 +1036,15 @@ pages.get('/login', (c) => {
             <div class="max-w-md w-full space-y-8">
                 <div class="text-center">
                     <a href="/" class="flex items-center justify-center mb-8">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-16 w-auto">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-gradient-to-br from-primary to-secondary p-3 rounded-xl shadow-lg">
+                                <i class="fas fa-home text-white text-4xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-3xl tracking-tight">GoCasa</span>
+                                <span class="text-secondary font-semibold text-lg -mt-1">360</span>
+                            </div>
+                        </div>
                     </a>
                     <h2 class="text-3xl font-bold text-gray-900" data-i18n="auth.login.title">Entrar na sua conta</h2>
                     <p class="mt-2 text-sm text-gray-600">
@@ -1199,7 +1231,7 @@ pages.get('/cadastro', (c) => {
         <title>Cadastro - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
         <script>
           tailwind.config = {
             theme: {
@@ -1223,7 +1255,15 @@ pages.get('/cadastro', (c) => {
             <div class="max-w-md w-full space-y-8">
                 <div class="text-center">
                     <a href="/" class="flex items-center justify-center mb-8">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-16 w-auto">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-gradient-to-br from-primary to-secondary p-3 rounded-xl shadow-lg">
+                                <i class="fas fa-home text-white text-4xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-3xl tracking-tight">GoCasa</span>
+                                <span class="text-secondary font-semibold text-lg -mt-1">360</span>
+                            </div>
+                        </div>
                     </a>
                     <h2 class="text-3xl font-bold text-gray-900" data-i18n="auth.register.title">Criar conta</h2>
                     <p class="mt-2 text-sm text-gray-600">
@@ -1490,7 +1530,7 @@ pages.get('/imoveis/:id', (c) => {
         <title>Detalhes do Imóvel - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
         <script>
           tailwind.config = {
             theme: {
@@ -1547,7 +1587,15 @@ pages.get('/imoveis/:id', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
+                        <div class="flex items-center space-x-2 group">
+                            <div class="bg-gradient-to-br from-primary to-secondary p-2 rounded-lg shadow-md group-hover:shadow-lg transition">
+                                <i class="fas fa-home text-white text-2xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-xl tracking-tight">GoCasa</span>
+                                <span class="text-secondary font-semibold text-xs -mt-1">360</span>
+                            </div>
+                        </div>
                     </a>
                     <div class="flex items-center space-x-4">
                         <a href="/imoveis" class="text-gray-700 hover:text-primary transition">
@@ -2168,7 +2216,7 @@ pages.get('/cadastrar-imovel', (c) => {
         <title>Cadastrar Imóvel - GOCASA360IT</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        <link rel="icon" type="image/png" href="https://www.genspark.ai/api/files/s/QJnI4zOh">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
         <script>
           tailwind.config = {
             theme: {
@@ -2193,7 +2241,15 @@ pages.get('/cadastrar-imovel', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <a href="/" class="flex items-center">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
+                        <div class="flex items-center space-x-2 group">
+                            <div class="bg-gradient-to-br from-primary to-secondary p-2 rounded-lg shadow-md group-hover:shadow-lg transition">
+                                <i class="fas fa-home text-white text-2xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-xl tracking-tight">GoCasa</span>
+                                <span class="text-secondary font-semibold text-xs -mt-1">360</span>
+                            </div>
+                        </div>
                     </a>
                     <div class="flex items-center space-x-4">
                         <a href="/" class="text-gray-700 hover:text-primary transition">
