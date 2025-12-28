@@ -1018,8 +1018,15 @@ pages.get('/login', (c) => {
             theme: {
               extend: {
                 colors: {
-                  primary: '#2563eb',
-                  secondary: '#0ea5e9'
+                  primary: '#1976D2',
+                  secondary: '#0ea5e9',
+                  accent: '#f59e0b',
+                  success: '#28A745',
+                  danger: '#DC3545',
+                  warning: '#FFC107',
+                  info: '#17a2b8',
+                  dark: '#212529',
+                  light: '#f8f9fa'
                 }
               }
             }
@@ -1030,65 +1037,90 @@ pages.get('/login', (c) => {
           body { font-family: 'Inter', sans-serif; }
         </style>
         <script src="/i18n.js"></script>
+        <script src="/static/components.js"></script>
     </head>
     <body class="bg-gray-50">
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
+                <!-- Logo -->
                 <div class="text-center">
-                    <a href="/" class="flex items-center justify-center mb-8">
-                        <div class="flex items-center space-x-3">
-                            <div class="bg-gradient-to-br from-primary to-secondary p-3 rounded-xl shadow-lg">
-                                <i class="fas fa-home text-white text-4xl"></i>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-primary font-bold text-3xl tracking-tight">GoCasa</span>
-                                <span class="text-secondary font-semibold text-lg -mt-1">360</span>
-                            </div>
-                        </div>
+                    <a href="/" class="inline-block mb-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" class="h-12 mx-auto">
+                          <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" style="stop-color:#1976D2;stop-opacity:1"/>
+                              <stop offset="100%" style="stop-color:#28A745;stop-opacity:1"/>
+                            </linearGradient>
+                          </defs>
+                          <path d="M 20 40 L 50 15 L 80 40 L 80 75 L 20 75 Z" 
+                                fill="url(#logoGradient)" stroke="white" stroke-width="3"/>
+                          <rect x="40" y="55" width="20" height="20" fill="white"/>
+                          <rect x="30" y="45" width="10" height="10" fill="white" opacity="0.8"/>
+                          <rect x="60" y="45" width="10" height="10" fill="white" opacity="0.8"/>
+                          <text x="95" y="60" font-family="Inter, Arial, sans-serif" 
+                                font-size="36" font-weight="700" fill="#1976D2">GOCASA</text>
+                          <text x="240" y="60" font-family="Inter, Arial, sans-serif" 
+                                font-size="36" font-weight="700" fill="#28A745">360</text>
+                          <text x="320" y="55" font-family="Inter, Arial, sans-serif" 
+                                font-size="24" font-weight="400" fill="#6B7280">IT</text>
+                        </svg>
                     </a>
-                    <h2 class="text-3xl font-bold text-gray-900" data-i18n="auth.login.title">Entrar na sua conta</h2>
-                    <p class="mt-2 text-sm text-gray-600">
-                        <span data-i18n="auth.login.noAccount">Não tem uma conta?</span> <a href="/cadastro" class="font-medium text-primary hover:text-secondary" data-i18n="auth.login.register">Cadastre-se</a>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2" data-i18n="auth.login.title">Entrar na sua conta</h2>
+                    <p class="text-sm text-gray-600">
+                        <span data-i18n="auth.login.noAccount">Não tem uma conta?</span> 
+                        <a href="/cadastro" class="font-semibold text-primary hover:text-secondary transition-colors" data-i18n="auth.login.register">Cadastre-se</a>
                     </p>
                 </div>
                 
-                <div id="alert" class="hidden"></div>
-                
-                <form id="loginForm" class="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg">
+                <!-- Form -->
+                <form id="loginForm" class="mt-8 space-y-6 bg-white p-8 rounded-xl shadow-lg border border-gray-200">
                     <div class="space-y-4">
+                        <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.login.email">Email</label>
+                            <label for="email" class="block text-gray-700 font-semibold mb-2" data-i18n="auth.login.email">
+                                Email <span class="text-danger">*</span>
+                            </label>
                             <input id="email" name="email" type="email" required 
-                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                    placeholder="seu@email.com">
                         </div>
+                        
+                        <!-- Senha -->
                         <div>
-                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="auth.login.password">Senha</label>
+                            <label for="senha" class="block text-gray-700 font-semibold mb-2" data-i18n="auth.login.password">
+                                Senha <span class="text-danger">*</span>
+                            </label>
                             <input id="senha" name="senha" type="password" required 
-                                   class="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                    placeholder="••••••••">
                         </div>
                     </div>
 
+                    <!-- Remember & Forgot -->
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <input id="lembrar" name="lembrar" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-                            <label for="lembrar" class="ml-2 block text-sm text-gray-900">Lembrar-me</label>
+                            <input id="lembrar" name="lembrar" type="checkbox" 
+                                   class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <label for="lembrar" class="ml-2 block text-sm text-gray-700">Lembrar-me</label>
                         </div>
                         <div class="text-sm">
-                            <a href="#" class="font-medium text-primary hover:text-secondary">Esqueceu a senha?</a>
+                            <a href="#" class="font-semibold text-primary hover:text-secondary transition-colors">
+                                Esqueceu a senha?
+                            </a>
                         </div>
                     </div>
 
+                    <!-- Submit Button -->
                     <button type="submit" id="submitBtn"
-                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition">
+                            class="w-full bg-primary hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
                         <i class="fas fa-sign-in-alt mr-2"></i>
                         <span data-i18n="auth.login.button">Entrar</span>
                     </button>
                 </form>
                 
+                <!-- Back to Home -->
                 <p class="mt-4 text-center text-sm text-gray-600">
-                    <a href="/" class="font-medium text-primary hover:text-secondary">
+                    <a href="/" class="font-semibold text-primary hover:text-secondary transition-colors">
                         <i class="fas fa-arrow-left mr-1"></i> Voltar para home
                     </a>
                 </p>
@@ -1097,7 +1129,6 @@ pages.get('/login', (c) => {
 
         <script>
           const form = document.getElementById('loginForm');
-          const alertDiv = document.getElementById('alert');
           const submitBtn = document.getElementById('submitBtn');
 
           form.addEventListener('submit', async (e) => {
@@ -1106,9 +1137,13 @@ pages.get('/login', (c) => {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             
-            // Desabilitar botão
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Entrando...';
+            // Usar setButtonLoading do components.js
+            if (window.GoCasa) {
+              window.GoCasa.setButtonLoading(submitBtn, true);
+            } else {
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Entrando...';
+            }
             
             try {
               const response = await fetch('/api/auth/login', {
@@ -1124,15 +1159,17 @@ pages.get('/login', (c) => {
               if (data.success) {
                 // Salvar token no localStorage
                 localStorage.setItem('token', data.data.token);
-                localStorage.setItem('usuario', JSON.stringify(data.data.usuario));
+                localStorage.setItem('user', JSON.stringify(data.data.usuario));
                 
-                // Mostrar sucesso
-                showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                // Usar toast do components.js
+                if (window.GoCasa) {
+                  window.GoCasa.showToast('Login realizado com sucesso!', 'success');
+                }
                 
                 // Redirecionar baseado no tipo de usuário
                 setTimeout(() => {
-                  if (data.data.usuario.tipo === 'proprietario') {
-                    window.location.href = '/dashboard/proprietario';
+                  if (data.data.usuario.tipo === 'proprietario' || data.data.usuario.tipo === 'corretor') {
+                    window.location.href = '/dashboard';
                   } else if (data.data.usuario.tipo === 'inquilino') {
                     window.location.href = '/imoveis';
                   } else {
@@ -1140,80 +1177,40 @@ pages.get('/login', (c) => {
                   }
                 }, 1500);
               } else {
-                showAlert(data.error || 'Erro ao fazer login', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Entrar';
+                // Usar toast do components.js
+                if (window.GoCasa) {
+                  window.GoCasa.showToast(data.error || 'Erro ao fazer login', 'error');
+                  window.GoCasa.setButtonLoading(submitBtn, false);
+                } else {
+                  alert(data.error || 'Erro ao fazer login');
+                  submitBtn.disabled = false;
+                  submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Entrar';
+                }
               }
             } catch (error) {
               console.error('Erro:', error);
-              showAlert('Erro ao fazer login. Tente novamente.', 'error');
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Entrar';
+              
+              if (window.GoCasa) {
+                window.GoCasa.showToast('Erro ao fazer login. Tente novamente.', 'error');
+                window.GoCasa.setButtonLoading(submitBtn, false);
+              } else {
+                alert('Erro ao fazer login. Tente novamente.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Entrar';
+              }
             }
           });
-          
-          function showAlert(message, type) {
-            const alertDiv = document.getElementById('alert');
-            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200';
-            alertDiv.className = \`border rounded-lg p-4 mb-4 \${bgColor}\`;
-            alertDiv.innerHTML = message;
-            alertDiv.classList.remove('hidden');
-          }
         </script>
 
         <script>
             // Initialize i18n when page loads
             document.addEventListener('DOMContentLoaded', () => {
-                // Initialize I18N
                 if (window.I18N) {
                     window.I18N.init();
-                    updateLanguageButton();
                 }
                 
-                // Language selector dropdown toggle
-                const languageBtn = document.getElementById('currentLanguageBtn');
-                const languageDropdown = document.getElementById('languageDropdown');
-                
-                if (languageBtn && languageDropdown) {
-                    languageBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        languageDropdown.classList.toggle('hidden');
-                    });
-                    
-                    // Close dropdown when clicking outside
-                    document.addEventListener('click', () => {
-                        languageDropdown.classList.add('hidden');
-                    });
-                }
+                console.log('✅ Login page loaded with GoCasa components');
             });
-            
-            function changeLanguage(locale) {
-                if (window.I18N) {
-                    window.I18N.changeLanguage(locale);
-                    updateLanguageButton();
-                    
-                    // Close dropdown
-                    const dropdown = document.getElementById('languageDropdown');
-                    if (dropdown) dropdown.classList.add('hidden');
-                    
-                    // Reload to apply translations
-                    setTimeout(() => window.location.reload(), 100);
-                }
-            }
-            
-            function updateLanguageButton() {
-                const flags = { 'pt-BR': '🇧🇷', 'it-IT': '🇮🇹', 'en-US': '🇺🇸' };
-                const langs = { 'pt-BR': 'PT', 'it-IT': 'IT', 'en-US': 'EN' };
-                
-                const currentLang = window.I18N ? window.I18N.currentLocale : 'it-IT';
-                const flagEl = document.getElementById('currentFlag');
-                const langEl = document.getElementById('currentLangCode');
-                const htmlTag = document.getElementById('htmlTag');
-                
-                if (flagEl) flagEl.textContent = flags[currentLang] || '🇮🇹';
-                if (langEl) langEl.textContent = langs[currentLang] || 'IT';
-                if (htmlTag) htmlTag.setAttribute('lang', currentLang);
-            }
         </script>
     </body>
     </html>
