@@ -1,13 +1,21 @@
 # GOCASA360IT
 
 ## 🏠 Visão Geral do Projeto
-**GOCASA360IT** é uma plataforma fullstack completa para aluguel e venda de imóveis, inspirada no modelo Quinto Andar. O projeto visa revolucionar o mercado imobiliário brasileiro com tecnologia, segurança e experiência digital de ponta.
+**GOCASA360IT** é uma plataforma fullstack completa para aluguel e venda de imóveis, inspirada no modelo Quinto Andar. O projeto visa revolucionar o mercado imobiliário italiano/brasileiro com tecnologia, segurança e experiência digital de ponta.
+
+## 🌍 Multilingual Support
+- ✅ **3 idiomas completos**: Italiano (IT), Português (PT-BR), Inglês (EN-US)
+- ✅ **370+ traduções** em todas as páginas principais
+- ✅ **Seletor visual com bandeiras** integrado na navbar
+- ✅ **Detecção automática** de idioma do navegador
+- ✅ **Persistência** no localStorage
+- ✅ **Adaptação por país**: Moeda, documentos, CEP/ZIP
 
 ## ✨ Funcionalidades Implementadas
 
 ### 🎨 Fase 1 - Landing Page Profissional ✅
 - ✅ Design moderno e responsivo com Tailwind CSS
-- ✅ Identidade visual: Azul (#2563eb) como cor primária
+- ✅ Identidade visual: Azul (#1976D2) como cor primária
 - ✅ Hero section com busca inteligente de imóveis
 - ✅ Filtros rápidos (preço, quartos, garagem, pet friendly)
 - ✅ **Seção de Imóveis em Destaque** - Carregamento automático na homepage
@@ -16,11 +24,12 @@
 - ✅ CTA para anúncio de imóveis
 - ✅ Footer completo com links e redes sociais
 - ✅ Navegação suave entre seções
+- ✅ **Logo oficial GoCasa360** integrada
 
 ### 💾 Fase 2 - Backend & Database ✅
 - ✅ **Banco de Dados D1** configurado e populado com dados de teste
 - ✅ **Schema completo** com 7 tabelas principais:
-  - `usuarios` - Gestão de usuários (proprietários, inquilinos, corretores, admin)
+  - `usuarios` - Gestão de usuários (proprietários, inquilinos, corretores, **admin**)
   - `imoveis` - Catálogo completo de imóveis
   - `favoritos` - Sistema de favoritos
   - `visitas` - Agendamento de visitas
@@ -28,23 +37,68 @@
   - `propostas` - Propostas de aluguel/compra
   - `sessoes` - Gerenciamento de autenticação
 - ✅ **Migrations** automáticas com wrangler
-- ✅ **Seed data** com 6 imóveis de teste
+- ✅ **Seed data** com 8+ imóveis de teste
 
 ### 🔌 APIs RESTful Implementadas ✅
 - ✅ `GET /api/health` - Health check do sistema
-- ✅ `GET /api/imoveis` - Listagem de imóveis com filtros avançados:
-  - Filtro por finalidade (aluguel, venda, ambos)
-  - Filtro por tipo (apartamento, casa, kitnet, cobertura)
-  - Filtro por localização (cidade, estado, bairro)
-  - Filtro por preço (mínimo e máximo)
-  - Filtro por características (quartos, vagas)
-  - Filtro pet friendly
-  - Paginação automática
-  - **Ordenação por destaque** (imóveis destacados aparecem primeiro)
+- ✅ `GET /api/imoveis` - Listagem de imóveis com filtros avançados
 - ✅ `GET /api/imoveis/:id` - Detalhes de um imóvel específico
 - ✅ `GET /api/imoveis/destaque/list` - Listagem exclusiva de imóveis em destaque
 - ✅ `POST /api/imoveis` - Cadastro de novos imóveis (proprietários/corretores)
-  - **Inclui campo `destaque`** para destacar imóvel na página principal
+
+### 🛡️ **NOVO: Painel de Administração Completo** ✅
+#### Acesso: `/admin`
+
+**Dashboard Principal:**
+- ✅ **Estatísticas em tempo real**:
+  - Total de usuários por tipo
+  - Total de imóveis (disponíveis, destaque, visualizações)
+  - Propostas por status
+  - Visitas por status
+  - Gráfico de crescimento de usuários (últimos 30 dias)
+- ✅ **Gráficos visuais** (Chart.js):
+  - Distribuição de usuários por tipo (pizza)
+  - Status dos imóveis (barras)
+
+**Gerenciamento de Usuários:**
+- ✅ Listagem completa com paginação
+- ✅ Filtros: tipo de usuário, status (ativo/inativo), busca por nome/email/CPF
+- ✅ Ações disponíveis:
+  - Ativar/Desativar usuários
+  - Verificar documentos
+  - Promover para admin
+  - Excluir usuários
+- ✅ API: `/api/admin/usuarios` (GET, PUT, DELETE)
+
+**Gerenciamento de Imóveis:**
+- ✅ Listagem completa com informações do proprietário
+- ✅ Filtros: tipo, status (disponível/indisponível), busca por título/cidade
+- ✅ Ações disponíveis:
+  - Destacar/Remover destaque
+  - Disponibilizar/Tornar indisponível
+  - Excluir imóveis
+- ✅ API: `/api/admin/imoveis` (GET, PUT, DELETE)
+
+**Gerenciamento de Propostas:**
+- ✅ Listagem completa com detalhes do imóvel e usuários
+- ✅ Filtros: status (pendente, aceita, recusada, contra-proposta)
+- ✅ Visualização de detalhes completos
+- ✅ API: `/api/admin/propostas` (GET)
+
+**Gerenciamento de Visitas:**
+- ✅ Listagem completa com agenda global
+- ✅ Filtros: status (pendente, confirmada, cancelada, realizada), data
+- ✅ Visualização de detalhes completos
+- ✅ API: `/api/admin/visitas` (GET)
+
+**Recursos do Admin Panel:**
+- ✅ **Multilíngue completo** (IT/PT/EN)
+- ✅ Interface moderna e responsiva
+- ✅ Navegação por abas entre seções
+- ✅ Paginação em todas as listagens
+- ✅ Confirmação de ações críticas
+- ✅ Feedback visual de ações (success/error)
+- ✅ Design consistente com o resto da plataforma
 
 ### 🖼️ Página de Listagem de Imóveis ✅
 - ✅ Interface moderna e responsiva
@@ -311,6 +365,24 @@ npm run deploy:prod
 - **Biblioteca**: Font Awesome 6.4.0
 - **Ícone Principal**: `fa-home`
 
+## 🌐 URLs de Acesso
+
+### Desenvolvimento (Sandbox)
+- **Homepage**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai
+- **Listagem de Imóveis**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/imoveis
+- **Login**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/login
+- **Cadastro**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/cadastro
+- **🛡️ Painel Admin**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/admin
+
+### APIs Públicas
+- **Health Check**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/health
+- **Imóveis**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/imoveis
+- **Destaques**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/imoveis/destaque/list
+- **Admin Stats**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/admin/stats
+
+### Código-fonte
+- **GitHub**: https://github.com/antoniocruz2776/GOCASA360_GEN
+
 ## 📱 Guia de Uso
 
 ### Para Inquilinos/Compradores
@@ -328,6 +400,16 @@ npm run deploy:prod
 4. Publique o anúncio
 5. Gerencie propostas e agendamentos
 6. Feche contratos digitalmente
+
+### Para Administradores
+1. Acesse `/admin` na plataforma
+2. **Dashboard**: Visualize estatísticas gerais e gráficos
+3. **Usuários**: Gerencie todos os usuários (ativar, desativar, verificar documentos, promover para admin)
+4. **Imóveis**: Modere imóveis (destacar, disponibilizar, remover)
+5. **Propostas**: Visualize e acompanhe todas as propostas da plataforma
+6. **Visitas**: Gerencie a agenda global de visitas
+7. Use filtros e busca para encontrar rapidamente o que precisa
+8. Todas as ações são auditadas e reversíveis
 
 ## 🔒 Segurança
 - Autenticação JWT
