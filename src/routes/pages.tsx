@@ -106,36 +106,36 @@ pages.get('/imoveis', (c) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Filtros -->
             <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-                <h2 class="text-2xl font-bold text-dark mb-4">Buscar Imóveis</h2>
+                <h2 class="text-2xl font-bold text-dark mb-4" data-i18n="nav.search">Buscar Imóveis</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Finalidade</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.purpose">Finalidade</label>
                         <select id="finalidade" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
-                            <option value="todos">Todos</option>
-                            <option value="aluguel">Aluguel</option>
-                            <option value="venda">Venda</option>
+                            <option value="todos" data-i18n="home.filters.all">Todos</option>
+                            <option value="aluguel" data-i18n="home.filters.rent">Aluguel</option>
+                            <option value="venda" data-i18n="home.filters.sale">Venda</option>
                         </select>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Imóvel</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.type">Tipo de Imóvel</label>
                         <select id="tipo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
-                            <option value="">Todos</option>
-                            <option value="apartamento">Apartamento</option>
-                            <option value="casa">Casa</option>
-                            <option value="kitnet">Kitnet</option>
-                            <option value="cobertura">Cobertura</option>
+                            <option value="" data-i18n="home.filters.all">Todos</option>
+                            <option value="apartamento" data-i18n="home.filters.apartment">Apartamento</option>
+                            <option value="casa" data-i18n="home.filters.house">Casa</option>
+                            <option value="kitnet" data-i18n="home.filters.condo">Kitnet</option>
+                            <option value="cobertura" data-i18n="home.filters.penthouse">Cobertura</option>
                         </select>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Cidade</label>
-                        <input type="text" id="cidade" placeholder="Ex: São Paulo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.city">Cidade</label>
+                        <input type="text" id="cidade" data-i18n-placeholder="home.filters.cityPlaceholder" placeholder="Ex: São Paulo" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Quartos</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.bedrooms">Quartos</label>
                         <select id="quartos" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
                             <option value="">Todos</option>
                             <option value="1">1+</option>
@@ -148,17 +148,17 @@ pages.get('/imoveis', (c) => {
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Preço Mínimo</label>
-                        <input type="number" id="preco_min" placeholder="R$ 0" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.minPrice">Preço Mínimo</label>
+                        <input type="number" id="preco_min" data-i18n-placeholder="home.filters.pricePlaceholder" placeholder="R$ 0" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Preço Máximo</label>
-                        <input type="number" id="preco_max" placeholder="R$ 10.000" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.maxPrice">Preço Máximo</label>
+                        <input type="number" id="preco_max" data-i18n-placeholder="home.filters.pricePlaceholder" placeholder="R$ 10.000" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Vagas de Garagem</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.parkingSpaces">Vagas de Garagem</label>
                         <select id="vagas" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none">
                             <option value="">Todas</option>
                             <option value="1">1+</option>
@@ -170,24 +170,24 @@ pages.get('/imoveis', (c) => {
                     <div class="flex items-end">
                         <label class="flex items-center space-x-2 cursor-pointer">
                             <input type="checkbox" id="pet_friendly" class="w-5 h-5 text-primary focus:ring-primary border-gray-300 rounded">
-                            <span class="text-sm font-medium text-gray-700">Pet Friendly</span>
+                            <span class="text-sm font-medium text-gray-700" data-i18n="home.filters.petFriendly">Pet Friendly</span>
                         </label>
                     </div>
                 </div>
                 
                 <div class="mt-6">
                     <button onclick="buscarImoveis()" class="w-full md:w-auto bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition font-semibold">
-                        <i class="fas fa-search mr-2"></i> Buscar Imóveis
+                        <i class="fas fa-search mr-2"></i> <span data-i18n="home.filters.search">Buscar Imóveis</span>
                     </button>
                     <button onclick="limparFiltros()" class="w-full md:w-auto ml-0 md:ml-4 mt-4 md:mt-0 border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-100 transition font-semibold">
-                        <i class="fas fa-times mr-2"></i> Limpar Filtros
+                        <i class="fas fa-times mr-2"></i> <span data-i18n="home.filters.clearFilters">Limpar Filtros</span>
                     </button>
                 </div>
             </div>
             
             <!-- Resultados -->
             <div class="mb-6 flex justify-between items-center">
-                <h3 id="resultados-titulo" class="text-xl font-bold text-dark">Carregando imóveis...</h3>
+                <h3 id="resultados-titulo" class="text-xl font-bold text-dark" data-i18n="common.loading">Carregando...</h3>
                 <div id="paginacao" class="flex space-x-2"></div>
             </div>
             
@@ -571,10 +571,10 @@ pages.get('/', (c) => {
                         <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
                     </a>
                     <div class="hidden md:flex items-center space-x-8">
-                        <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition">Buscar Imóveis</a>
-                        <a href="/cadastrar-imovel" class="text-gray-700 hover:text-primary transition">Anunciar</a>
-                        <a href="#sobre" class="text-gray-700 hover:text-primary transition">Sobre</a>
-                        <a href="#contato" class="text-gray-700 hover:text-primary transition">Contato</a>
+                        <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition" data-i18n="nav.search">Buscar Imóveis</a>
+                        <a href="/cadastrar-imovel" class="text-gray-700 hover:text-primary transition" data-i18n="nav.advertise">Anunciar</a>
+                        <a href="#sobre" class="text-gray-700 hover:text-primary transition" data-i18n="nav.about">Sobre</a>
+                        <a href="#contato" class="text-gray-700 hover:text-primary transition" data-i18n="nav.contact">Contato</a>
                     </div>
                     <div class="flex items-center space-x-4">
                         <a href="/login" class="text-primary hover:text-secondary transition font-semibold" data-i18n="nav.login">Entrar</a>
@@ -613,28 +613,28 @@ pages.get('/', (c) => {
         <section class="hero-pattern py-20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center text-white">
-                    <h1 class="text-5xl md:text-6xl font-bold mb-6">Encontre Seu Lar Ideal</h1>
-                    <p class="text-xl md:text-2xl mb-12 text-blue-100">Aluguel e venda de imóveis com tecnologia e segurança</p>
+                    <h1 class="text-5xl md:text-6xl font-bold mb-6" data-i18n="home.hero.title">Encontre Seu Lar Ideal</h1>
+                    <p class="text-xl md:text-2xl mb-12 text-blue-100" data-i18n="home.hero.subtitle">Aluguel e venda de imóveis com tecnologia e segurança</p>
                     
                     <!-- Search Bar -->
                     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div class="md:col-span-2">
-                                <input type="text" id="search-cidade" placeholder="Cidade, bairro ou endereço..." 
+                                <input type="text" id="search-cidade" data-i18n-placeholder="home.hero.searchPlaceholder" placeholder="Cidade, bairro ou endereço..." 
                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none text-gray-700">
                             </div>
                             <div>
                                 <select id="search-tipo" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none text-gray-700">
-                                    <option value="">Tipo de Imóvel</option>
-                                    <option value="apartamento">Apartamento</option>
-                                    <option value="casa">Casa</option>
-                                    <option value="kitnet">Kitnet</option>
-                                    <option value="cobertura">Cobertura</option>
+                                    <option value="" data-i18n="home.filters.type">Tipo de Imóvel</option>
+                                    <option value="apartamento" data-i18n="home.filters.apartment">Apartamento</option>
+                                    <option value="casa" data-i18n="home.filters.house">Casa</option>
+                                    <option value="kitnet" data-i18n="home.filters.condo">Kitnet</option>
+                                    <option value="cobertura" data-i18n="home.filters.penthouse">Cobertura</option>
                                 </select>
                             </div>
                             <div>
                                 <button onclick="buscarHomePage()" class="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition font-semibold">
-                                    <i class="fas fa-search mr-2"></i> Buscar
+                                    <i class="fas fa-search mr-2"></i> <span data-i18n="home.filters.search">Buscar</span>
                                 </button>
                             </div>
                         </div>
@@ -666,7 +666,7 @@ pages.get('/', (c) => {
                     <div class="inline-block">
                         <h2 class="text-4xl font-bold text-gray-800 mb-3">
                             <i class="fas fa-star text-accent mr-3"></i>
-                            Imóveis em Destaque
+                            <span data-i18n="home.featured.title">Imóveis em Destaque</span>
                         </h2>
                         <div class="h-1 w-32 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
                     </div>
@@ -2406,7 +2406,7 @@ pages.get('/cadastrar-imovel', (c) => {
                         <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b">Características</h2>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Quartos</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="home.filters.bedrooms">Quartos</label>
                                 <input type="number" id="quartos" min="0"
                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
                             </div>

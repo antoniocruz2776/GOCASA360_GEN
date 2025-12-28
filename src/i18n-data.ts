@@ -28,7 +28,17 @@ export const translations = {
         "land": "Terreno",
         "commercial": "Comercial",
         "rural": "Rural",
-        "search": "Buscar"
+        "search": "Buscar",
+        "city": "Cidade",
+        "cityPlaceholder": "Ex: São Paulo",
+        "bedrooms": "Quartos",
+        "minPrice": "Preço Mínimo",
+        "maxPrice": "Preço Máximo",
+        "pricePlaceholder": "R$ 0",
+        "parkingSpaces": "Vagas de Garagem",
+        "petFriendly": "Aceita Pets",
+        "clearFilters": "Limpar Filtros",
+        "resultsFound": "imóveis encontrados"
       },
       "stats": {
         "properties": "Imóveis Disponíveis",
@@ -156,7 +166,17 @@ export const translations = {
         "land": "Terreno",
         "commercial": "Commerciale",
         "rural": "Rurale",
-        "search": "Cerca"
+        "search": "Cerca",
+        "city": "Città",
+        "cityPlaceholder": "Es: Milano",
+        "bedrooms": "Camere",
+        "minPrice": "Prezzo Minimo",
+        "maxPrice": "Prezzo Massimo",
+        "pricePlaceholder": "€ 0",
+        "parkingSpaces": "Posti Auto",
+        "petFriendly": "Animali Ammessi",
+        "clearFilters": "Cancella Filtri",
+        "resultsFound": "immobili trovati"
       },
       "stats": {
         "properties": "Immobili Disponibili",
@@ -284,7 +304,17 @@ export const translations = {
         "land": "Land",
         "commercial": "Commercial",
         "rural": "Rural",
-        "search": "Search"
+        "search": "Search",
+        "city": "City",
+        "cityPlaceholder": "E.g.: New York",
+        "bedrooms": "Bedrooms",
+        "minPrice": "Min Price",
+        "maxPrice": "Max Price",
+        "pricePlaceholder": "$ 0",
+        "parkingSpaces": "Parking Spaces",
+        "petFriendly": "Pet Friendly",
+        "clearFilters": "Clear Filters",
+        "resultsFound": "properties found"
       },
       "stats": {
         "properties": "Available Properties",
