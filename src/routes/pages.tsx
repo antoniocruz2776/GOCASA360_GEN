@@ -2417,6 +2417,188 @@ pages.get('/cadastrar-imovel', (c) => {
 // ============================================
 // ADMIN PANEL
 // ============================================
+
+// Página Dashboard Proprietário - Story 4
+pages.get('/dashboard', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231976D2' width='100' height='100' rx='15'/><text y='75' x='50' text-anchor='middle' font-size='60' fill='white' font-family='Arial'>🏠</text></svg>">
+        <script>
+          tailwind.config = {
+            theme: {
+              extend: {
+                colors: {
+                  primary: '#1976D2',
+                  secondary: '#0ea5e9',
+                  accent: '#f59e0b',
+                  success: '#28A745',
+                  danger: '#DC3545',
+                  dark: '#1e293b',
+                  light: '#f1f5f9'
+                }
+              }
+            }
+          }
+        </script>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+          body { font-family: 'Inter', sans-serif; }
+          
+          .btn-action {
+            @apply px-4 py-2 rounded-lg transition font-medium;
+          }
+          .btn-primary { @apply bg-primary text-white hover:bg-blue-700; }
+          .btn-secondary { @apply bg-secondary text-white hover:bg-cyan-600; }
+          .btn-success { @apply bg-success text-white hover:bg-green-700; }
+          .btn-warning { @apply bg-yellow-500 text-white hover:bg-yellow-600; }
+          .btn-danger { @apply bg-danger text-white hover:bg-red-700; }
+        </style>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <a href="/" class="flex items-center">
+                        <div class="flex items-center space-x-2 group">
+                            <div class="bg-gradient-to-br from-primary to-secondary p-2 rounded-lg shadow-md group-hover:shadow-lg transition">
+                                <i class="fas fa-home text-white text-2xl"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-primary font-bold text-xl tracking-tight">GoCasa</span>
+                                <span class="text-secondary font-semibold text-xs -mt-1">360</span>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="flex items-center space-x-4">
+                        <a href="/imoveis" class="text-gray-700 hover:text-primary transition">
+                            <i class="fas fa-search mr-2"></i> Buscar
+                        </a>
+                        <a href="/favoritos" class="text-gray-700 hover:text-primary transition">
+                            <i class="fas fa-heart mr-2"></i> Favoritos
+                        </a>
+                        <a href="/dashboard" class="text-primary font-semibold">
+                            <i class="fas fa-chart-line mr-2"></i> Dashboard
+                        </a>
+                        <button onclick="logout()" class="text-gray-700 hover:text-danger transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Sair
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2">
+                        <i class="fas fa-chart-line text-primary mr-3"></i>
+                        Dashboard
+                    </h1>
+                    <p class="text-lg text-gray-600">
+                        Gerencie seus imóveis e acompanhe suas métricas
+                    </p>
+                </div>
+                
+                <a href="/cadastrar-imovel" class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition shadow-lg hover:shadow-xl">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span class="font-semibold">Anunciar Imóvel</span>
+                </a>
+            </div>
+            
+            <div id="alert" class="hidden"></div>
+            
+            <!-- Métricas -->
+            <div id="metricsContainer">
+                <div class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-5xl text-primary mb-4"></i>
+                    <p class="text-gray-600">Carregando métricas...</p>
+                </div>
+            </div>
+            
+            <!-- Meus Imóveis -->
+            <div class="mt-12" id="imoveis">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-building mr-2"></i>
+                        Meus Imóveis
+                    </h2>
+                </div>
+                
+                <div id="imoveisContainer">
+                    <div class="text-center py-12">
+                        <i class="fas fa-spinner fa-spin text-5xl text-primary mb-4"></i>
+                        <p class="text-gray-600">Carregando imóveis...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Próximas Visitas -->
+            <div class="mt-12" id="visitas">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-calendar-check mr-2"></i>
+                        Próximas Visitas
+                    </h2>
+                </div>
+                
+                <div id="visitasContainer">
+                    <div class="text-center py-8">
+                        <i class="fas fa-spinner fa-spin text-3xl text-primary mb-4"></i>
+                        <p class="text-gray-600">Carregando visitas...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Excluir -->
+        <div id="modalExcluir" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+                <div class="flex items-center mb-4">
+                    <div class="p-3 bg-red-100 rounded-full mr-4">
+                        <i class="fas fa-exclamation-triangle text-2xl text-danger"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Confirmar Exclusão</h3>
+                </div>
+                
+                <p class="text-gray-700 mb-6">
+                    Tem certeza que deseja excluir o imóvel 
+                    <strong id="modalExcluirTitulo"></strong>?
+                    Esta ação não pode ser desfeita.
+                </p>
+                
+                <div class="flex space-x-3">
+                    <button onclick="fecharModal('modalExcluir')" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+                    <button id="btnConfirmarExclusao" class="flex-1 px-4 py-2 bg-danger text-white rounded-lg hover:bg-red-700 transition">
+                        <i class="fas fa-trash mr-2"></i> Excluir
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+          function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+          }
+        </script>
+        <script src="/static/dashboard.js"></script>
+    </body>
+    </html>
+  `)
+})
 pages.get('/admin', (c) => {
   return c.html(`
     <!DOCTYPE html>

@@ -9,6 +9,7 @@ import visitas from './routes/visitas'
 import propostas from './routes/propostas'
 import admin from './routes/admin'
 import adminAdvanced from './routes/admin-advanced'
+import dashboard from './routes/dashboard'
 
 type Bindings = {
   DB: D1Database;
@@ -60,6 +61,7 @@ app.route('/api/imoveis', imoveis)
 app.route('/api/favoritos', favoritos)
 app.route('/api/visitas', visitas)
 app.route('/api/propostas', propostas)
+app.route('/api/dashboard', dashboard)
 app.route('/api/admin', admin)
 app.route('/api/admin', adminAdvanced)
 
