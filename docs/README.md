@@ -232,7 +232,7 @@ Conteúdo:
 
 | Data | Versão | Alterações |
 |------|--------|------------|
-| 28/12/2024 | 1.0 | Criação inicial da documentação completa |
+| 28/12/2025 | 1.0 | Criação inicial da documentação completa |
 
 ---
 
@@ -242,6 +242,6 @@ Para dúvidas sobre esta documentação ou sugestões de melhoria, entre em cont
 
 ---
 
-**Última atualização**: 28/12/2024  
+**Última atualização**: 28/12/2025  
 **Versão**: 1.0  
 **Repositório**: [GitHub - GoCasa360IT](https://github.com/antoniocruz2776/GOCASA360_GEN)

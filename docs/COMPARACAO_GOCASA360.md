@@ -474,6 +474,6 @@ TOTAL ANUAL:                 €420k-€1M/ano
 
 ---
 
-**Última atualização**: 28/12/2024  
+**Última atualização**: 28/12/2025  
 **Versão**: 1.0  
 **Fonte**: Análise comparativa baseada em documentação pública do QuintoAndar e código-fonte do GoCasa360IT
