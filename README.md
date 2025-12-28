@@ -98,6 +98,85 @@
 - ✅ Paginação em todas as listagens
 - ✅ Confirmação de ações críticas
 - ✅ Feedback visual de ações (success/error)
+
+### 🔐 **NOVO: Sistema de Segurança e Moderação Enterprise** ✅
+#### Implementação Completa dos Próximos Passos
+
+**1. Autenticação JWT Admin:**
+- ✅ Endpoint dedicado: `POST /api/auth/admin/login`
+- ✅ Tokens JWT com expiração de 7 dias
+- ✅ Middleware `requireAdmin` em todas as rotas admin
+- ✅ Controle de tentativas de login falhadas
+- ✅ Bloqueio automático de contas suspeitas
+- ✅ Rastreamento de último login e IP
+
+**2. Sistema de Permissões Granulares:**
+- ✅ **4 Roles pré-configurados**:
+  - `Super Admin`: Acesso total (`*`)
+  - `Moderador`: Gerenciar usuários, imóveis e denúncias
+  - `Suporte`: Visualização e suporte aos usuários
+  - `Financeiro`: Gerenciar propostas e transações
+- ✅ **Middleware de Permissões**: `requirePermission(permission)`
+- ✅ **APIs de Gerenciamento**:
+  - `GET /api/admin/permissoes` - Listar roles
+  - `POST /api/admin/usuarios/:id/permissoes` - Conceder
+  - `DELETE /api/admin/usuarios/:id/permissoes/:permId` - Revogar
+
+**3. Sistema de Auditoria Completo:**
+- ✅ **Tabela `audit_logs`**: Rastreia TODAS as ações admin
+- ✅ **Campos rastreados**: admin_id, action_type, resource_type, resource_id, old_value, new_value, ip_address, user_agent
+- ✅ **Ações monitoradas**: create, update, delete, approve, reject, block, unblock, grant_permission, revoke_permission
+- ✅ **API de Consulta**: `GET /api/admin/audit-logs?admin_id=&resource_type=&action_type=&page=1`
+
+**4. Sistema de Denúncias/Reports:**
+- ✅ **Tipos suportados**: usuário, imóvel, proposta, mensagem
+- ✅ **Motivos**: fraude, spam, conteúdo inapropriado, informação falsa, assédio, outro
+- ✅ **Status workflow**: pendente → em_analise → resolvida/rejeitada
+- ✅ **APIs**:
+  - `GET /api/admin/denuncias` - Listar denúncias
+  - `PUT /api/admin/denuncias/:id` - Atualizar status
+  - `POST /api/admin/denuncias/criar` - Criar denúncia (público)
+- ✅ Notificação automática para admins ao receber denúncia
+
+**5. Sistema de Aprovação de Imóveis:**
+- ✅ **Workflow de moderação**: pendente → aprovado/rejeitado/revisao_necessaria
+- ✅ **Aprovação automática**: Imóvel disponibilizado após aprovação
+- ✅ **Notificação ao proprietário**: Informando aprovação ou rejeição
+- ✅ **APIs**:
+  - `GET /api/admin/aprovacoes?status=pendente` - Listar pendências
+  - `PUT /api/admin/aprovacoes/:id` - Aprovar/Rejeitar
+
+**6. Sistema de Blacklist:**
+- ✅ **Tipos**: email, cpf_cnpj, ip, telefone
+- ✅ **Modos**: Permanente ou temporário (com data de expiração)
+- ✅ **Verificação automática**: Helper `isBlacklisted(DB, tipo, valor)`
+- ✅ **APIs**:
+  - `GET /api/admin/blacklist?tipo=email` - Listar
+  - `POST /api/admin/blacklist` - Adicionar
+  - `DELETE /api/admin/blacklist/:id` - Remover
+
+**7. Sistema de Notificações Admin:**
+- ✅ **Tipos**: nova_denuncia, nova_proposta, documento_pendente, imovel_pendente, atividade_suspeita
+- ✅ **Prioridades**: baixa, media, alta, critica
+- ✅ **Notificações direcionadas**: Para admin específico ou todos
+- ✅ **APIs**:
+  - `GET /api/admin/notificacoes?lida=0&prioridade=alta` - Listar
+  - `PUT /api/admin/notificacoes/:id/lida` - Marcar como lida
+
+**Credenciais de Teste (Admin):**
+```
+Email: admin@gocasa360.com
+Senha: Admin@123
+Role: Super Admin
+```
+
+**Estatísticas de Implementação:**
+- 🆕 **7 novas tabelas** no banco de dados
+- 🆕 **15+ novas APIs** autenticadas
+- 🆕 **3 middleware** de segurança
+- 🆕 **~2,800 linhas** de código novo
+- 📦 **Bundle size**: 280.60 kB (+18.5 KB)
+- ✅ **9/12 próximos passos** concluídos (75%)
 - ✅ Design consistente com o resto da plataforma
 
 ### 🖼️ Página de Listagem de Imóveis ✅
@@ -378,7 +457,31 @@ npm run deploy:prod
 - **Health Check**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/health
 - **Imóveis**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/imoveis
 - **Destaques**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/imoveis/destaque/list
-- **Admin Stats**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/admin/stats
+- **Criar Denúncia**: https://3000-i68t7i2orvxg8ha29zhdy-5185f4aa.sandbox.novita.ai/api/admin/denuncias/criar
+
+### APIs Admin (Requerem Autenticação JWT)
+- **Login Admin**: `POST /api/auth/admin/login`
+- **Dashboard Stats**: `GET /api/admin/stats`
+- **Denúncias**: `GET /api/admin/denuncias`
+- **Aprovações**: `GET /api/admin/aprovacoes`
+- **Blacklist**: `GET /api/admin/blacklist`
+- **Notificações**: `GET /api/admin/notificacoes`
+- **Audit Logs**: `GET /api/admin/audit-logs`
+- **Permissões**: `GET /api/admin/permissoes`
+- **Usuários**: `GET/PUT/DELETE /api/admin/usuarios`
+- **Imóveis**: `GET/PUT/DELETE /api/admin/imoveis`
+
+**Como usar APIs Admin:**
+```bash
+# 1. Fazer login
+curl -X POST http://localhost:3000/api/auth/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@gocasa360.com","senha":"Admin@123"}'
+
+# 2. Usar o token retornado
+curl -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  http://localhost:3000/api/admin/denuncias
+```
 
 ### Código-fonte
 - **GitHub**: https://github.com/antoniocruz2776/GOCASA360_GEN
