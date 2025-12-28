@@ -21,19 +21,30 @@ function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 }
 
-// POST /api/auth/register - Registro de novo usuário
+// POST /api/auth/register - Registro de novo usuário com GDPR
 auth.post('/register', async (c) => {
   try {
     const { DB } = c.env
     const body = await c.req.json()
     
-    const { email, senha, nome_completo, tipo, telefone, cpf_cnpj } = body
+    const { 
+      email, senha, nome_completo, tipo, telefone, cpf_cnpj,
+      gdpr_consent // Novo campo GDPR
+    } = body
     
     // Validações básicas
     if (!email || !senha || !nome_completo || !tipo) {
       return c.json({
         success: false,
         error: 'Campos obrigatórios: email, senha, nome_completo, tipo'
+      }, 400)
+    }
+    
+    // Validar consentimento GDPR obrigatório
+    if (!gdpr_consent || !gdpr_consent.privacy_policy || !gdpr_consent.terms_of_service) {
+      return c.json({
+        success: false,
+        error: 'Consentimento obrigatório: Você deve aceitar a Política de Privacidade e os Termos de Serviço'
       }, 400)
     }
     
@@ -70,6 +81,46 @@ auth.post('/register', async (c) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 1)
     `).bind(userId, email, senhaHash, nome_completo, tipo, telefone || null, cpf_cnpj || null).run()
     
+    // Criar registro de consentimento GDPR
+    const consentId = generateId('consent')
+    const ipAddress = c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown'
+    const userAgent = c.req.header('User-Agent') || 'unknown'
+    
+    await DB.prepare(`
+      INSERT INTO gdpr_consents (
+        id, usuario_id, ip_address, user_agent, consent_version,
+        necessary, marketing, analytics, third_party, profiling,
+        data_retention_years
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      consentId,
+      userId,
+      ipAddress,
+      userAgent,
+      '1.0', // Versão atual dos termos
+      1, // necessary (sempre true)
+      gdpr_consent.marketing ? 1 : 0,
+      gdpr_consent.analytics ? 1 : 0,
+      gdpr_consent.third_party ? 1 : 0,
+      gdpr_consent.profiling ? 1 : 0,
+      10 // 10 anos de retenção
+    ).run()
+    
+    // Registrar no histórico de consentimentos
+    await DB.prepare(`
+      INSERT INTO gdpr_consent_history (
+        id, consent_id, usuario_id, action, new_values, ip_address, user_agent
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      generateId('history'),
+      consentId,
+      userId,
+      'created',
+      JSON.stringify(gdpr_consent),
+      ipAddress,
+      userAgent
+    ).run()
+    
     // Gerar JWT token
     const JWT_SECRET = 'gocasa360it-secret-key-change-in-production'
     const token = await sign({
@@ -96,7 +147,12 @@ auth.post('/register', async (c) => {
           nome_completo: nome_completo,
           tipo: tipo
         },
-        token: token
+        token: token,
+        gdpr: {
+          consentId: consentId,
+          consentedAt: new Date().toISOString(),
+          dataRetentionYears: 10
+        }
       }
     }, 201)
     
@@ -387,6 +443,312 @@ auth.post('/admin/login', async (c) => {
       success: false,
       message: 'Erro ao fazer login'
     }, 500)
+  }
+})
+
+// ============================================
+// ROTAS GDPR - Direitos dos Usuários
+// ============================================
+
+// GET /api/auth/gdpr/export - Exportar todos os dados do usuário (Direito de Acesso)
+auth.get('/gdpr/export', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({ success: false, error: 'Token não fornecido' }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    
+    // Buscar sessão
+    const sessao = await DB.prepare(`
+      SELECT usuario_id FROM sessoes 
+      WHERE token = ? AND datetime(expires_at) > datetime('now')
+    `).bind(token).first()
+    
+    if (!sessao) {
+      return c.json({ success: false, error: 'Token inválido ou expirado' }, 401)
+    }
+    
+    const userId = sessao.usuario_id
+    
+    // 1. Dados pessoais
+    const user = await DB.prepare(`SELECT * FROM usuarios WHERE id = ?`).bind(userId).first()
+    
+    // 2. Imóveis
+    const properties = await DB.prepare(`SELECT * FROM imoveis WHERE proprietario_id = ?`).bind(userId).all()
+    
+    // 3. Mensagens
+    const messages = await DB.prepare(`
+      SELECT * FROM mensagens WHERE remetente_id = ? OR destinatario_id = ?
+    `).bind(userId, userId).all()
+    
+    // 4. Favoritos
+    const favorites = await DB.prepare(`SELECT * FROM favoritos WHERE usuario_id = ?`).bind(userId).all()
+    
+    // 5. Visitas
+    const visits = await DB.prepare(`SELECT * FROM visitas WHERE usuario_id = ?`).bind(userId).all()
+    
+    // 6. Propostas
+    const proposals = await DB.prepare(`SELECT * FROM propostas WHERE usuario_id = ?`).bind(userId).all()
+    
+    // 7. Consentimentos GDPR
+    const consents = await DB.prepare(`SELECT * FROM gdpr_consents WHERE usuario_id = ?`).bind(userId).all()
+    
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      user: {
+        id: user.id,
+        email: user.email,
+        nome_completo: user.nome_completo,
+        tipo: user.tipo,
+        telefone: user.telefone,
+        cpf_cnpj: user.cpf_cnpj,
+        created_at: user.created_at
+      },
+      properties: properties.results,
+      messages: messages.results,
+      favorites: favorites.results,
+      visits: visits.results,
+      proposals: proposals.results,
+      gdprConsents: consents.results
+    }
+    
+    return c.json({ success: true, data: exportData })
+    
+  } catch (error) {
+    console.error('Erro ao exportar dados:', error)
+    return c.json({ success: false, error: 'Erro ao exportar dados' }, 500)
+  }
+})
+
+// POST /api/auth/gdpr/request-erasure - Solicitar exclusão de dados (Direito ao Esquecimento)
+auth.post('/gdpr/request-erasure', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({ success: false, error: 'Token não fornecido' }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    const sessao = await DB.prepare(`
+      SELECT usuario_id FROM sessoes 
+      WHERE token = ? AND datetime(expires_at) > datetime('now')
+    `).bind(token).first()
+    
+    if (!sessao) {
+      return c.json({ success: false, error: 'Token inválido ou expirado' }, 401)
+    }
+    
+    const userId = sessao.usuario_id
+    
+    // Verificar se há obrigações legais (contratos ativos, pagamentos pendentes)
+    const activeContracts = await DB.prepare(`
+      SELECT COUNT(*) as count FROM imoveis WHERE proprietario_id = ? AND disponivel = 1
+    `).bind(userId).first()
+    
+    if (activeContracts && activeContracts.count > 0) {
+      // Não pode excluir - tem imóveis ativos
+      // Anonimizar ao invés de excluir
+      const anonymizedId = generateId('anon')
+      
+      await DB.prepare(`
+        INSERT INTO gdpr_anonymized_data (
+          id, original_user_id, anonymized_id, reason, legal_basis
+        ) VALUES (?, ?, ?, ?, ?)
+      `).bind(
+        generateId('anon'),
+        userId,
+        anonymizedId,
+        'Possui imóveis ativos publicados na plataforma',
+        'Obrigação contratual - Art. 6.1.b GDPR'
+      ).run()
+      
+      // Anonimizar dados sensíveis
+      await DB.prepare(`
+        UPDATE usuarios SET
+          nome_completo = ?,
+          email = ?,
+          telefone = NULL,
+          cpf_cnpj = NULL,
+          foto_perfil = NULL
+        WHERE id = ?
+      `).bind(
+        'Utente Anonimizzato',
+        `${anonymizedId}@anonimo.gocasa360.it`,
+        userId
+      ).run()
+      
+      return c.json({
+        success: true,
+        message: 'Dados anonimizados com sucesso',
+        anonymized: true,
+        reason: 'Obrigações contratuais impedem exclusão completa. Dados sensíveis foram anonimizados.'
+      })
+    }
+    
+    // Pode excluir completamente
+    const requestId = generateId('request')
+    
+    await DB.prepare(`
+      INSERT INTO gdpr_data_requests (
+        id, usuario_id, request_type, status
+      ) VALUES (?, ?, ?, ?)
+    `).bind(requestId, userId, 'erasure', 'pending').run()
+    
+    return c.json({
+      success: true,
+      message: 'Solicitação de exclusão registrada com sucesso',
+      requestId,
+      estimatedCompletionDays: 30
+    })
+    
+  } catch (error) {
+    console.error('Erro ao solicitar exclusão:', error)
+    return c.json({ success: false, error: 'Erro ao solicitar exclusão' }, 500)
+  }
+})
+
+// PUT /api/auth/gdpr/consent - Atualizar preferências de consentimento
+auth.put('/gdpr/consent', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({ success: false, error: 'Token não fornecido' }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    const sessao = await DB.prepare(`
+      SELECT usuario_id FROM sessoes 
+      WHERE token = ? AND datetime(expires_at) > datetime('now')
+    `).bind(token).first()
+    
+    if (!sessao) {
+      return c.json({ success: false, error: 'Token inválido ou expirado' }, 401)
+    }
+    
+    const userId = sessao.usuario_id
+    const body = await c.req.json()
+    const { marketing, analytics, third_party, profiling } = body
+    
+    // Buscar consentimento atual
+    const currentConsent = await DB.prepare(`
+      SELECT * FROM gdpr_consents 
+      WHERE usuario_id = ? AND withdrawn_at IS NULL
+      ORDER BY consented_at DESC LIMIT 1
+    `).bind(userId).first()
+    
+    if (!currentConsent) {
+      return c.json({ success: false, error: 'Consentimento não encontrado' }, 404)
+    }
+    
+    // Atualizar preferências
+    await DB.prepare(`
+      UPDATE gdpr_consents SET
+        marketing = ?,
+        analytics = ?,
+        third_party = ?,
+        profiling = ?,
+        last_updated = datetime('now')
+      WHERE id = ?
+    `).bind(
+      marketing !== undefined ? (marketing ? 1 : 0) : currentConsent.marketing,
+      analytics !== undefined ? (analytics ? 1 : 0) : currentConsent.analytics,
+      third_party !== undefined ? (third_party ? 1 : 0) : currentConsent.third_party,
+      profiling !== undefined ? (profiling ? 1 : 0) : currentConsent.profiling,
+      currentConsent.id
+    ).run()
+    
+    // Registrar no histórico
+    await DB.prepare(`
+      INSERT INTO gdpr_consent_history (
+        id, consent_id, usuario_id, action, old_values, new_values, ip_address, user_agent
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      generateId('history'),
+      currentConsent.id,
+      userId,
+      'updated',
+      JSON.stringify({
+        marketing: !!currentConsent.marketing,
+        analytics: !!currentConsent.analytics,
+        third_party: !!currentConsent.third_party,
+        profiling: !!currentConsent.profiling
+      }),
+      JSON.stringify({ marketing, analytics, third_party, profiling }),
+      c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown',
+      c.req.header('User-Agent') || 'unknown'
+    ).run()
+    
+    return c.json({
+      success: true,
+      message: 'Preferências atualizadas com sucesso'
+    })
+    
+  } catch (error) {
+    console.error('Erro ao atualizar consentimento:', error)
+    return c.json({ success: false, error: 'Erro ao atualizar consentimento' }, 500)
+  }
+})
+
+// GET /api/auth/gdpr/consent - Obter consentimento atual
+auth.get('/gdpr/consent', async (c) => {
+  try {
+    const { DB } = c.env
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({ success: false, error: 'Token não fornecido' }, 401)
+    }
+    
+    const token = authHeader.substring(7)
+    const sessao = await DB.prepare(`
+      SELECT usuario_id FROM sessoes 
+      WHERE token = ? AND datetime(expires_at) > datetime('now')
+    `).bind(token).first()
+    
+    if (!sessao) {
+      return c.json({ success: false, error: 'Token inválido ou expirado' }, 401)
+    }
+    
+    const userId = sessao.usuario_id
+    
+    const consent = await DB.prepare(`
+      SELECT * FROM gdpr_consents 
+      WHERE usuario_id = ? AND withdrawn_at IS NULL
+      ORDER BY consented_at DESC LIMIT 1
+    `).bind(userId).first()
+    
+    if (!consent) {
+      return c.json({ success: false, error: 'Consentimento não encontrado' }, 404)
+    }
+    
+    return c.json({
+      success: true,
+      data: {
+        consentId: consent.id,
+        consentedAt: consent.consented_at,
+        purposes: {
+          necessary: !!consent.necessary,
+          marketing: !!consent.marketing,
+          analytics: !!consent.analytics,
+          thirdParty: !!consent.third_party,
+          profiling: !!consent.profiling
+        },
+        dataRetentionYears: consent.data_retention_years,
+        lastUpdated: consent.last_updated
+      }
+    })
+    
+  } catch (error) {
+    console.error('Erro ao obter consentimento:', error)
+    return c.json({ success: false, error: 'Erro ao obter consentimento' }, 500)
   }
 })
 

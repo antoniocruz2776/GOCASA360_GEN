@@ -1333,12 +1333,75 @@ pages.get('/cadastro', (c) => {
                         </div>
                     </div>
 
-                    <div class="flex items-center">
-                        <input id="termos" name="termos" type="checkbox" required class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-                        <label for="termos" class="ml-2 block text-sm text-gray-900">
-                            Concordo com os <a href="#" class="text-primary hover:text-secondary">Termos de Uso</a> e 
-                            <a href="#" class="text-primary hover:text-secondary">Política de Privacidade</a>
-                        </label>
+                    <!-- GDPR Consent Section -->
+                    <div class="border-t border-gray-200 pt-6 mt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-shield-alt text-primary mr-2"></i>
+                            Consentimento GDPR/RGPD
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            Conforme o Regulamento Geral de Proteção de Dados (RGPD/GDPR UE 2016/679), solicitamos seu consentimento para:
+                        </p>
+                        
+                        <!-- Consentimento obrigatório -->
+                        <div class="space-y-3 mb-4 bg-gray-50 p-4 rounded-lg">
+                            <div class="flex items-start">
+                                <input id="gdpr_privacy_policy" name="gdpr_privacy_policy" type="checkbox" required 
+                                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mt-1">
+                                <label for="gdpr_privacy_policy" class="ml-3 block text-sm text-gray-900">
+                                    <strong>Obrigatório:</strong> Li e aceito a 
+                                    <a href="/privacy-policy" target="_blank" class="text-primary hover:text-secondary underline">Informativa Privacy</a> 
+                                    e os 
+                                    <a href="/terms-of-service" target="_blank" class="text-primary hover:text-secondary underline">Termos de Serviço</a>
+                                    <span class="text-red-600">*</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Consentimentos opcionais -->
+                        <div class="space-y-3">
+                            <p class="text-sm font-medium text-gray-700 mb-2">Consentimentos Opcionais:</p>
+                            
+                            <div class="flex items-start">
+                                <input id="gdpr_marketing" name="gdpr_marketing" type="checkbox" 
+                                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mt-1">
+                                <label for="gdpr_marketing" class="ml-3 block text-sm text-gray-600">
+                                    <strong>Marketing:</strong> Concordo em receber emails promocionais, ofertas especiais e newsletters sobre imóveis
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <input id="gdpr_analytics" name="gdpr_analytics" type="checkbox" checked
+                                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mt-1">
+                                <label for="gdpr_analytics" class="ml-3 block text-sm text-gray-600">
+                                    <strong>Análise:</strong> Autorizo o uso de cookies analíticos para melhorar a experiência do site (Google Analytics)
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <input id="gdpr_third_party" name="gdpr_third_party" type="checkbox" 
+                                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mt-1">
+                                <label for="gdpr_third_party" class="ml-3 block text-sm text-gray-600">
+                                    <strong>Parceiros:</strong> Concordo em compartilhar meus dados com parceiros de confiança (corretores, prestadores de serviço)
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <input id="gdpr_profiling" name="gdpr_profiling" type="checkbox" checked
+                                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded mt-1">
+                                <label for="gdpr_profiling" class="ml-3 block text-sm text-gray-600">
+                                    <strong>Perfilação:</strong> Autorizo análise de preferências para recomendações personalizadas de imóveis
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-blue-50 border-l-4 border-primary rounded">
+                            <p class="text-xs text-gray-600">
+                                <i class="fas fa-info-circle text-primary mr-1"></i>
+                                <strong>Seus direitos:</strong> Você pode acessar, corrigir, exportar ou excluir seus dados a qualquer momento nas configurações da sua conta.
+                                Retenção de dados: 10 anos para obrigações fiscais, 2 anos para dados de marketing.
+                            </p>
+                        </div>
                     </div>
 
                     <button type="submit" id="submitBtn"
@@ -1385,7 +1448,19 @@ pages.get('/cadastro', (c) => {
             const senha = document.getElementById('senha').value;
             const senha_confirm = document.getElementById('senha_confirm').value;
             
+            // Consentimentos GDPR
+            const gdpr_privacy_policy = document.getElementById('gdpr_privacy_policy').checked;
+            const gdpr_marketing = document.getElementById('gdpr_marketing').checked;
+            const gdpr_analytics = document.getElementById('gdpr_analytics').checked;
+            const gdpr_third_party = document.getElementById('gdpr_third_party').checked;
+            const gdpr_profiling = document.getElementById('gdpr_profiling').checked;
+            
             // Validações
+            if (!gdpr_privacy_policy) {
+              showAlert('Você deve aceitar a Política de Privacidade e os Termos de Serviço', 'error');
+              return;
+            }
+            
             if (senha.length < 6) {
               showAlert('A senha deve ter no mínimo 6 caracteres', 'error');
               return;
@@ -1412,7 +1487,15 @@ pages.get('/cadastro', (c) => {
                   telefone, 
                   cpf_cnpj, 
                   tipo, 
-                  senha 
+                  senha,
+                  gdpr_consent: {
+                    privacy_policy: gdpr_privacy_policy,
+                    terms_of_service: gdpr_privacy_policy, // Mesmo checkbox
+                    marketing: gdpr_marketing,
+                    analytics: gdpr_analytics,
+                    third_party: gdpr_third_party,
+                    profiling: gdpr_profiling
+                  }
                 })
               });
               
@@ -3534,6 +3617,170 @@ pages.get('/admin', (c) => {
                 if (htmlTag) htmlTag.setAttribute('lang', currentLang);
             }
         </script>
+    </body>
+    </html>
+  `)
+})
+
+// Página de Política de Privacidade (simplificada)
+pages.get('/privacy-policy', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Informativa Privacy - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-shield-alt text-primary mr-2"></i>
+                    Informativa sul Trattamento dei Dati Personali
+                </h1>
+                
+                <p class="text-sm text-gray-600 mb-6">
+                    (ai sensi degli artt. 13 e 14 del Regolamento UE 2016/679 - GDPR)
+                </p>
+                
+                <div class="space-y-6 text-gray-700">
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">1. Titolare del Trattamento</h2>
+                        <p>GoCasa360 S.r.l. - Italia<br>
+                        Email: privacy@gocasa360.it<br>
+                        PEC: gocasa360@pec.it</p>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">2. Finalità del Trattamento</h2>
+                        <p>I dati personali vengono trattati per:</p>
+                        <ul class="list-disc ml-6 mt-2 space-y-1">
+                            <li>Esecuzione del contratto (locazione/vendita immobili)</li>
+                            <li>Marketing e comunicazioni commerciali (con consenso)</li>
+                            <li>Analisi statistiche e miglioramento servizi (con consenso)</li>
+                            <li>Adempimenti fiscali e contabili (obbligo di legge)</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">3. Base Giuridica</h2>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>Esecuzione del contratto (art. 6.1.b GDPR)</li>
+                            <li>Consenso dell'interessato (art. 6.1.a GDPR)</li>
+                            <li>Obbligo di legge (art. 6.1.c GDPR)</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">4. Conservazione dei Dati</h2>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>Dati anagrafici: 10 anni (obbligo fiscale)</li>
+                            <li>Dati di marketing: 2 anni dall'ultimo contatto</li>
+                            <li>Dati di navigazione: 13 mesi</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">5. Diritti dell'Interessato</h2>
+                        <p>Ha diritto di:</p>
+                        <ul class="list-disc ml-6 mt-2 space-y-1">
+                            <li>Accedere ai propri dati</li>
+                            <li>Rettificare dati inesatti</li>
+                            <li>Cancellare i dati (diritto all'oblio)</li>
+                            <li>Limitare il trattamento</li>
+                            <li>Opporsi al trattamento</li>
+                            <li>Ricevere i dati in formato leggibile (portabilità)</li>
+                            <li>Revocare il consenso</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">6. Reclamo al Garante</h2>
+                        <p>Può presentare reclamo al Garante per la Protezione dei Dati Personali:<br>
+                        Website: www.garanteprivacy.it<br>
+                        Email: garante@gpdp.it</p>
+                    </section>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t">
+                    <a href="/cadastro" class="text-primary hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>Voltar ao Cadastro
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+  `)
+})
+
+// Página de Termos de Serviço (simplificada)
+pages.get('/terms-of-service', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Termini di Servizio - GOCASA360IT</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-file-contract text-primary mr-2"></i>
+                    Termini e Condizioni di Servizio
+                </h1>
+                
+                <div class="space-y-6 text-gray-700">
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">1. Accettazione dei Termini</h2>
+                        <p>Utilizzando la piattaforma GoCasa360, l'utente accetta questi termini e condizioni.</p>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">2. Servizi Offerti</h2>
+                        <p>GoCasa360 è una piattaforma che connette proprietari e inquilini/acquirenti di immobili.</p>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">3. Obblighi dell'Utente</h2>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>Fornire informazioni veritiere</li>
+                            <li>Mantenere riservate le credenziali di accesso</li>
+                            <li>Non utilizzare la piattaforma per scopi illegali</li>
+                            <li>Rispettare i diritti di altri utenti</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">4. Limitazioni di Responsabilità</h2>
+                        <p>GoCasa360 agisce come intermediario e non è responsabile per:</p>
+                        <ul class="list-disc ml-6 mt-2 space-y-1">
+                            <li>Veridicità delle informazioni fornite dagli utenti</li>
+                            <li>Conclusione o meno dei contratti tra le parti</li>
+                            <li>Danni derivanti dall'uso improprio della piattaforma</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-3">5. Modifiche ai Termini</h2>
+                        <p>GoCasa360 si riserva il diritto di modificare questi termini in qualsiasi momento, con preavviso agli utenti.</p>
+                    </section>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t">
+                    <a href="/cadastro" class="text-primary hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>Voltar ao Cadastro
+                    </a>
+                </div>
+            </div>
+        </div>
     </body>
     </html>
   `)
