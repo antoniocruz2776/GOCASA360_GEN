@@ -659,59 +659,6 @@ pages.get('/', (c) => {
             </div>
         </section>
 
-        <!-- Featured Properties Section -->
-        <section class="py-16 bg-gradient-to-b from-gray-50 to-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <div class="inline-block">
-                        <h2 class="text-4xl font-bold text-gray-800 mb-3">
-                            <i class="fas fa-star text-accent mr-3"></i>
-                            <span data-i18n="home.featured.title">Imóveis em Destaque</span>
-                        </h2>
-                        <div class="h-1 w-32 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full"></div>
-                    </div>
-                    <p class="text-gray-600 mt-4 text-lg">Confira nossas melhores oportunidades selecionadas para você</p>
-                </div>
-                
-                <!-- Featured Properties Cards -->
-                <div id="featured-properties" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-                    <!-- Loading skeleton -->
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
-                        <div class="h-64 bg-gray-200"></div>
-                        <div class="p-6 space-y-3">
-                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-                            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse hidden md:block">
-                        <div class="h-64 bg-gray-200"></div>
-                        <div class="p-6 space-y-3">
-                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-                            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse hidden lg:block">
-                        <div class="h-64 bg-gray-200"></div>
-                        <div class="p-6 space-y-3">
-                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-                            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- View All Button -->
-                <div class="text-center">
-                    <a href="/imoveis" class="inline-block bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transition-all transform hover:scale-105">
-                        Ver Todos os Imóveis
-                        <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-            </div>
-        </section>
-
         <!-- Stats Section -->
         <section class="py-16 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
