@@ -964,21 +964,19 @@ pages.get('/', (c) => {
           function formatNumberHome(num) {
             return new Intl.NumberFormat('pt-BR').format(num);
           }
-          
-          // Carregar destaques ao carregar a página
-          document.addEventListener('DOMContentLoaded', () => {
-            carregarDestaquesHome();
-          });
         </script>
 
         <script>
-            // Initialize i18n when page loads
+            // Initialize everything when page loads
             document.addEventListener('DOMContentLoaded', () => {
                 // Initialize I18N
                 if (window.I18N) {
                     window.I18N.init();
                     updateLanguageButton();
                 }
+                
+                // Load featured properties
+                carregarDestaquesHome();
                 
                 // Language selector dropdown toggle
                 const languageBtn = document.getElementById('currentLanguageBtn');
