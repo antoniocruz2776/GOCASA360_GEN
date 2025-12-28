@@ -61,8 +61,8 @@ pages.get('/imoveis', (c) => {
         <nav class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
-                    <a href="/" class="flex items-center space-x-2">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
+                    <a href="/" class="flex items-center">
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
                     </a>
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition">Buscar Imóveis</a>
@@ -485,8 +485,8 @@ pages.get('/', (c) => {
         <nav class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
-                    <a href="/" class="flex items-center space-x-2">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
+                    <a href="/" class="flex items-center">
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
                     </a>
                     <div class="hidden md:flex items-center space-x-8">
                         <a href="/imoveis" class="text-primary font-semibold hover:text-secondary transition">Buscar Imóveis</a>
@@ -1324,8 +1324,8 @@ pages.get('/imoveis/:id', (c) => {
         <nav class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
-                    <a href="/" class="flex items-center space-x-2">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
+                    <a href="/" class="flex items-center">
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
                     </a>
                     <div class="flex items-center space-x-4">
                         <a href="/imoveis" class="text-gray-700 hover:text-primary transition">
@@ -1914,8 +1914,8 @@ pages.get('/cadastrar-imovel', (c) => {
         <nav class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
-                    <a href="/" class="flex items-center space-x-2">
-                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360IT" class="h-12 w-auto">
+                    <a href="/" class="flex items-center">
+                        <img src="https://www.genspark.ai/api/files/s/QJnI4zOh" alt="GoCasa360" class="h-10 w-auto">
                     </a>
                     <div class="flex items-center space-x-4">
                         <a href="/" class="text-gray-700 hover:text-primary transition">
